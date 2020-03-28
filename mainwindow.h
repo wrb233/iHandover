@@ -18,6 +18,12 @@ public:
 	void showDPCPoint();
 
 
+//把slots作出反应的函数都定义好
+private slots:
+	void open();
+//把用到的控件都重新定义一遍
+private:
+	QAction *actionExport;
 	
     
 private:

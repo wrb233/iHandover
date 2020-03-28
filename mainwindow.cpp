@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 	showDPCPoint();
+
+
+	connect(ui->actionExport,SIGNAL(triggered()),this,SLOT(open()));//connect没毛病
 }
 
 MainWindow::~MainWindow()
@@ -103,7 +106,14 @@ void MainWindow::showDPCPoint()
 
 }
 
+//这里可以写slots函数
+void MainWindow::open(){
+
+	
+	QMessageBox::information(NULL, "Title", "Content", 
+                         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
 
+}
 
 
