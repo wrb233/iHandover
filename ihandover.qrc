@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/addrecord.png</file>
+        <file>images/export.png</file>
+        <file>images/handover.png</file>
+        <file>images/historyquery.png</file>
+        <file>images/previousquery.png</file>
+        <file>images/query.png</file>
+        <file>images/record.png</file>
+        <file>images/save.png</file>
+    </qresource>
+</RCC>

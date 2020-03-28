@@ -1,0 +1,15 @@
+/debug
+/images
+/ipch
+/release
+build-solarissparc.sh
+build-solarisx86.sh
+build-ubuntu.sh
+build-xp.bat
+iHandover.sdf
+iHandover.sln
+iHandover.suo
+iHandover.vcxproj
+iHandover.vcxproj.filters
+iHandover.vcxproj.user
+vc100.pdb
