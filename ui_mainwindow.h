@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sat Mar 28 19:52:46 2020
+** Created: Mon Mar 30 22:06:02 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -43,10 +43,10 @@ public:
     QTabWidget *tabWidget;
     QWidget *tab;
     QGridLayout *gridLayout;
-    QTableView *tableView;
+    QTableView *accidentinfo_tableview;
     QWidget *tab_2;
     QGridLayout *gridLayout_2;
-    QTableView *tableView_2;
+    QTableView *maintenanceplan_tableview;
     QWidget *tab_3;
     QGridLayout *gridLayout_6;
     QGridLayout *gridLayout_5;
@@ -60,7 +60,7 @@ public:
     QTableView *DPCPoint_tableview;
     QWidget *tab_4;
     QGridLayout *gridLayout_4;
-    QTableView *tableView_4;
+    QTableView *lineload_tableview;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -128,10 +128,10 @@ public:
         gridLayout->setSpacing(6);
         gridLayout->setContentsMargins(11, 11, 11, 11);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        tableView = new QTableView(tab);
-        tableView->setObjectName(QString::fromUtf8("tableView"));
+        accidentinfo_tableview = new QTableView(tab);
+        accidentinfo_tableview->setObjectName(QString::fromUtf8("accidentinfo_tableview"));
 
-        gridLayout->addWidget(tableView, 0, 0, 1, 1);
+        gridLayout->addWidget(accidentinfo_tableview, 0, 0, 1, 1);
 
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
@@ -140,10 +140,10 @@ public:
         gridLayout_2->setSpacing(6);
         gridLayout_2->setContentsMargins(11, 11, 11, 11);
         gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
-        tableView_2 = new QTableView(tab_2);
-        tableView_2->setObjectName(QString::fromUtf8("tableView_2"));
+        maintenanceplan_tableview = new QTableView(tab_2);
+        maintenanceplan_tableview->setObjectName(QString::fromUtf8("maintenanceplan_tableview"));
 
-        gridLayout_2->addWidget(tableView_2, 0, 0, 1, 1);
+        gridLayout_2->addWidget(maintenanceplan_tableview, 0, 0, 1, 1);
 
         tabWidget->addTab(tab_2, QString());
         tab_3 = new QWidget();
@@ -206,10 +206,10 @@ public:
         gridLayout_4->setSpacing(6);
         gridLayout_4->setContentsMargins(11, 11, 11, 11);
         gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
-        tableView_4 = new QTableView(tab_4);
-        tableView_4->setObjectName(QString::fromUtf8("tableView_4"));
+        lineload_tableview = new QTableView(tab_4);
+        lineload_tableview->setObjectName(QString::fromUtf8("lineload_tableview"));
 
-        gridLayout_4->addWidget(tableView_4, 0, 0, 1, 1);
+        gridLayout_4->addWidget(lineload_tableview, 0, 0, 1, 1);
 
         tabWidget->addTab(tab_4, QString());
 
@@ -247,7 +247,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(2);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);

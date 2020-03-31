@@ -4,6 +4,7 @@
 #include<QStandardItemModel>
 
 
+
 extern DBPOOLHANDLE dbPoolHandle;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -12,10 +13,19 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
+	
+
 	showDPCPoint();
 
+    
+	connect(ui->actionExport,SIGNAL(triggered()),this,SLOT(exportcsv()));//connect没毛病
 
-	connect(ui->actionExport,SIGNAL(triggered()),this,SLOT(open()));//connect没毛病
+	
+	
+
+
+	
 }
 
 MainWindow::~MainWindow()
@@ -107,13 +117,177 @@ void MainWindow::showDPCPoint()
 }
 
 //这里可以写slots函数
-void MainWindow::open(){
+void MainWindow::exportcsv()
+{
 
 	
-	QMessageBox::information(NULL, "Title", "Content", 
-                         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+	//判断用户停留在哪个tableview，编号从零开始
+	int index = ui->tabWidget->currentIndex();
+
+	if (index == 0)//用户停留在事故信息tableview
+	{
+	
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File")," ",tr("file (*.csv)"));
+	
+	if (fileName.isEmpty())
+ return;
+
+ QFile file(fileName);
+ 
+ if (file.open(QIODevice::WriteOnly))
+ {
+ QTextStream stream(&file);
+
+ QAbstractItemModel* view = ui->accidentinfo_tableview->model();//肯定导出第一个tableview啦
+
+ int cc=view->columnCount();
+ 
+ QStringList list;
+ for (int i=0;i<cc;i++)
+ {
+ list<< view->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString();
+ }
+ stream<< list.join(",")<<"\r\n";
+ 
+ 
+ for (int i=0;i<view->rowCount();i++)
+ {
+ list.clear();
+for (int j=0;j<cc;j++)
+{
+ list<<view->index(i,j).data().toString();
+ }
+ stream<< list.join(",")<<"\r\n";
+ }
+ QMessageBox::information(this, tr("导出数据成功"), tr("信息已保存在%1！").arg(fileName), tr("确定"));
+file.close();
+ }
+	
+	}
+
+	if (index == 1)//用户停留在检修计划tableview
+	{
+	
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File")," ",tr("file (*.csv)"));
+	
+	if (fileName.isEmpty())
+ return;
+
+ QFile file(fileName);
+ 
+ if (file.open(QIODevice::WriteOnly))
+ {
+ QTextStream stream(&file);
+
+ QAbstractItemModel* view = ui->maintenanceplan_tableview->model();
+
+ int cc=view->columnCount();
+ 
+ QStringList list;
+ for (int i=0;i<cc;i++)
+ {
+ list<< view->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString();
+ }
+ stream<< list.join(",")<<"\r\n";
+ 
+ 
+ for (int i=0;i<view->rowCount();i++)
+ {
+ list.clear();
+for (int j=0;j<cc;j++)
+{
+ list<<view->index(i,j).data().toString();
+ }
+ stream<< list.join(",")<<"\r\n";
+ }
+ QMessageBox::information(this, tr("导出数据成功"), tr("信息已保存在%1！").arg(fileName), tr("确定"));
+file.close();
+ }
+	
+	}
+	if (index == 2)//用户停留在遥控记录tableview
+	{
+	
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File")," ",tr("file (*.csv)"));
+	
+	if (fileName.isEmpty())
+ return;
+
+ QFile file(fileName);
+ 
+ if (file.open(QIODevice::WriteOnly))
+ {
+ QTextStream stream(&file);
+
+ QAbstractItemModel* view = ui->DPCPoint_tableview->model();
+
+ int cc=view->columnCount();
+ 
+ QStringList list;
+ for (int i=0;i<cc;i++)
+ {
+ list<< view->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString();
+ }
+ stream<< list.join(",")<<"\r\n";
+ 
+ 
+ for (int i=0;i<view->rowCount();i++)
+ {
+ list.clear();
+for (int j=0;j<cc;j++)
+{
+ list<<view->index(i,j).data().toString();
+ }
+ stream<< list.join(",")<<"\r\n";
+ }
 
 
+ QMessageBox::information(this, tr("导出数据成功"), tr("信息已保存在%1！").arg(fileName), tr("确定"));
+file.close();
+ }
+	
+	}
+	if (index == 3)//用户停留在线路负载tableview
+	{
+	
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File")," ",tr("file (*.csv)"));
+	
+	if (fileName.isEmpty())
+ return;
+
+ QFile file(fileName);
+ 
+ if (file.open(QIODevice::WriteOnly))
+ {
+ QTextStream stream(&file);
+
+ QAbstractItemModel* view = ui->lineload_tableview->model();
+
+ int cc=view->columnCount();
+ 
+ QStringList list;
+ for (int i=0;i<cc;i++)
+ {
+ list<< view->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString();
+ }
+ stream<< list.join(",")<<"\r\n";
+ 
+ for (int i=0;i<view->rowCount();i++)
+ {
+ list.clear();
+for (int j=0;j<cc;j++)
+{
+ list<<view->index(i,j).data().toString();
+ }
+ stream<< list.join(",")<<"\r\n";
+ }
+ QMessageBox::information(this, tr("导出数据成功"), tr("信息已保存在%1！").arg(fileName), tr("确定"));
+file.close();
+ }
+	
+	}
+
+
+	
 }
-
 
