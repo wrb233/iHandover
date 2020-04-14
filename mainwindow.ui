@@ -23,109 +23,41 @@
     <normaloff>:/images/handover.png</normaloff>:/images/handover.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <property name="currentIndex">
-       <number>1</number>
-      </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>事故信息</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QTableView" name="accidentinfo_tableview"/>
-        </item>
-       </layout>
+      <widget class="QDateEdit" name="startTime"/>
+      <widget class="QLabel" name="period">
+       <property name="text">
+        <string> 至</string>
+       </property>
       </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>检修计划</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QTableView" name="maintenenceplan_tableview"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>遥控记录</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_6">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>         成功次数：</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>                    8</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>次</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>         失败次数：</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>                    0</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>次</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="QTableView" name="DPCPoint_tableview"/>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_4">
-       <attribute name="title">
-        <string>线路负载</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
-         <widget class="QTableView" name="lineload_tableview"/>
-        </item>
-       </layout>
+      <widget class="QDateEdit" name="endTime"/>
+      <widget class="QPushButton" name="queryAtTime">
+       <property name="text">
+        <string>查询</string>
+       </property>
       </widget>
      </widget>
+    </item>
+    <item row="0" column="1">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QTableView" name="SignInAndOut_tableView"/>
     </item>
    </layout>
   </widget>
@@ -158,107 +90,51 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionExport"/>
+   <addaction name="actionSignOut"/>
    <addaction name="separator"/>
-   <addaction name="actionSave"/>
+   <addaction name="actionSignIn"/>
    <addaction name="separator"/>
-   <addaction name="actionRecord"/>
-   <addaction name="separator"/>
-   <addaction name="actionAddRecord"/>
-   <addaction name="separator"/>
-   <addaction name="actionQuery"/>
-   <addaction name="separator"/>
-   <addaction name="actionPreviousQuery"/>
-   <addaction name="separator"/>
-   <addaction name="actionHistoryQuery"/>
+   <addaction name="actionConfirm"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionExport">
+  <action name="actionSignOut">
    <property name="icon">
     <iconset resource="ihandover.qrc">
-     <normaloff>:/images/export.png</normaloff>:/images/export.png</iconset>
+     <normaloff>:/images/signout.png</normaloff>:/images/signout.png</iconset>
    </property>
    <property name="text">
-    <string>导出</string>
+    <string>交班</string>
    </property>
    <property name="toolTip">
-    <string>导出</string>
+    <string>交班</string>
    </property>
    <property name="font">
     <font/>
    </property>
   </action>
-  <action name="actionSave">
+  <action name="actionSignIn">
    <property name="icon">
     <iconset resource="ihandover.qrc">
-     <normaloff>:/images/save.png</normaloff>:/images/save.png</iconset>
+     <normaloff>:/images/signin.png</normaloff>:/images/signin.png</iconset>
    </property>
    <property name="text">
-    <string>保存</string>
+    <string>接班</string>
    </property>
    <property name="toolTip">
-    <string>保存</string>
+    <string>接班</string>
    </property>
   </action>
-  <action name="actionRecord">
+  <action name="actionConfirm">
    <property name="icon">
     <iconset resource="ihandover.qrc">
-     <normaloff>:/images/record.png</normaloff>:/images/record.png</iconset>
+     <normaloff>:/images/confirm.png</normaloff>:/images/confirm.png</iconset>
    </property>
    <property name="text">
-    <string>录入当班</string>
+    <string>确认</string>
    </property>
    <property name="toolTip">
-    <string>录入当班</string>
-   </property>
-  </action>
-  <action name="actionAddRecord">
-   <property name="icon">
-    <iconset resource="ihandover.qrc">
-     <normaloff>:/images/addrecord.png</normaloff>:/images/addrecord.png</iconset>
-   </property>
-   <property name="text">
-    <string>补录前一班</string>
-   </property>
-   <property name="toolTip">
-    <string>补录前一班</string>
-   </property>
-  </action>
-  <action name="actionQuery">
-   <property name="icon">
-    <iconset resource="ihandover.qrc">
-     <normaloff>:/images/query.png</normaloff>:/images/query.png</iconset>
-   </property>
-   <property name="text">
-    <string>查询当班</string>
-   </property>
-   <property name="toolTip">
-    <string>查询当班</string>
-   </property>
-  </action>
-  <action name="actionPreviousQuery">
-   <property name="icon">
-    <iconset resource="ihandover.qrc">
-     <normaloff>:/images/previousquery.png</normaloff>:/images/previousquery.png</iconset>
-   </property>
-   <property name="text">
-    <string>查询前一班</string>
-   </property>
-   <property name="toolTip">
-    <string>查询前一班</string>
-   </property>
-  </action>
-  <action name="actionHistoryQuery">
-   <property name="icon">
-    <iconset resource="ihandover.qrc">
-     <normaloff>:/images/historyquery.png</normaloff>:/images/historyquery.png</iconset>
-   </property>
-   <property name="text">
-    <string>查询历史</string>
-   </property>
-   <property name="toolTip">
-    <string>查询历史</string>
+    <string>确认</string>
    </property>
   </action>
  </widget>

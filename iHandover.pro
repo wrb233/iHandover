@@ -78,17 +78,29 @@ HEADERS += common.h\
 		   mainwindow.h\
 		   ToolUtil.h\
 		   version.h\
-		   initializtion.h
+		   initializtion.h\
+           initConTable.h\
+           CreateTable.h\
+		   signout.h\
+		   signin.h\
+		   information.h
            
 		   
 SOURCES += mainwindow.cpp\
 		   main.cpp\
 		   ToolUtil.cpp\
 		   version.cpp \
-		   initializtion.cpp
-		   
+		   initializtion.cpp\
+		   initConTable.cpp\
+           CreateTable.cpp\
+		   signout.cpp\
+		   signin.cpp\
+		   information.cpp
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui\
+		    signout.ui\
+			signin.ui\
+			information.ui
 
 RESOURCES += \
     ihandover.qrc

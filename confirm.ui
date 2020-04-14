@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Confirm</class>
+ <widget class="QDialog" name="Confirm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>552</width>
+    <height>460</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>确认交接班</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="ihandover.qrc">
+    <normaloff>:/images/confirm.png</normaloff>:/images/confirm.png</iconset>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
+     <y>12</y>
+     <width>541</width>
+     <height>344</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="signoutperson">
+      <property name="text">
+       <string>交班人</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="4">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>135</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="5" colspan="2">
+     <widget class="QComboBox" name="signoutname"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="signinperson">
+      <property name="text">
+       <string>接班人</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" colspan="4">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>135</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="5" colspan="2">
+     <widget class="QComboBox" name="signinname"/>
+    </item>
+    <item row="2" column="0" colspan="3">
+     <widget class="QLabel" name="signinandoutTime">
+      <property name="text">
+       <string>交接班时间</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="3" colspan="3">
+     <widget class="QDateEdit" name="signinandoutTime_QDateEdit"/>
+    </item>
+    <item row="2" column="6">
+     <widget class="QComboBox" name="signinandout_shift"/>
+    </item>
+    <item row="3" column="0" colspan="4">
+     <widget class="QLabel" name="signinandoutNote">
+      <property name="text">
+       <string>交接备注内容</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="4" colspan="4">
+     <widget class="QTextEdit" name="signinandoutNote_QTextEdit"/>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QLabel" name="workplace">
+      <property name="text">
+       <string>上班地点</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2" colspan="3">
+     <widget class="QComboBox" name="workplacename"/>
+    </item>
+    <item row="5" column="0" colspan="7">
+     <spacer>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>281</width>
+        <height>31</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="5" column="7">
+     <widget class="QPushButton" name="okButton">
+      <property name="text">
+       <string>确认</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="8">
+     <widget class="QPushButton" name="cancelButton">
+      <property name="text">
+       <string>取消</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources>
+  <include location="ihandover.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>okButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Confirm</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>278</x>
+     <y>253</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>96</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Confirm</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>369</x>
+     <y>253</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

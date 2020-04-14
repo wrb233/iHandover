@@ -8,5 +8,9 @@
         <file>images/query.png</file>
         <file>images/record.png</file>
         <file>images/save.png</file>
+		<file>images/signout.png</file>
+		<file>images/signin.png</file>
+		<file>images/confirm.png</file>
+		<file>images/information.png</file>
     </qresource>
 </RCC>

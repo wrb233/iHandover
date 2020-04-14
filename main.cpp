@@ -5,10 +5,20 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QTextCodec>
+#include "initConTable.h"
+#include "CreateTable.h"
+#include "signout.h"
+#include <QDialog>
+#include "signin.h"
+#include "information.h"
+#include "confirm.h"
 
 DBPOOLHANDLE dbPoolHandle;
 Database *database = NULL;
 Logger iHandoverLog = Logger::getInstance(LOG4CPLUS_TEXT("iHandoverLog"));
+
+InitConTable *initConTable = NULL;
+
 
 //initializtion* test =NULL;
 
@@ -48,13 +58,14 @@ void gatherDPCPoint()
 
 int main(int argc, char *argv[])
 {
+
+
+
+	OptionList optionList;
 	if (echoVersion(argc, argv)) 
 	{
 		return 0;
 	}
-
-
-
 	if (!ToolUtil::connectDB(argc, argv, dbPoolHandle))
 	{
 		std::cout<<"connect hdsdatabase failed"<<std::endl;
@@ -62,12 +73,21 @@ int main(int argc, char *argv[])
 	{
          qDebug()<<"hdsdatabase connected ";
 	} 
-	
-
 	//test = new initializtion();
-
 	//test->gatherDPCPoint();
+
 	
+	initConTable = new InitConTable(argc, argv, NULL,optionList,RUNTIME_SCOPE);
+	initConTable->initType();
+	qDebug()<<"initAllTables()";
+	initConTable->initAllTables();
+
+
+
+
+
+
+
 
     QApplication a(argc, argv);
 
@@ -76,12 +96,25 @@ int main(int argc, char *argv[])
 	QTextCodec::setCodecForTr(QTextCodec::codecForLocale());
     MainWindow w;
     w.show();
-    
 
+
+
+	/*
+	SignOut s1;
+	s1.show();
+
+	SignIn s2;
+	s2.show();
+
+
+	Information i1;
+	i1.show();
+    
+	*/
     
 	
 
-
+	
 
 
     return a.exec();
