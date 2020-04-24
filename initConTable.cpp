@@ -47,8 +47,8 @@ bool InitConTable::initAccidentInfoTable()
 		qDebug()<<"searchANDCreateTable() H_FA_ACCIDENTINFO ERROR";
 		return false;
 	}
-	QString H_FA_ACCIDENTINFO = "delete from H_FA_ACCIDENTINFO";
-	executeSQL(H_FA_ACCIDENTINFO,0);//清空表
+	//QString H_FA_ACCIDENTINFO = "delete from H_FA_ACCIDENTINFO";
+	//executeSQL(H_FA_ACCIDENTINFO,0);//清空表
 	return true;
 }
 bool InitConTable::initMaintenancePlanTable()
@@ -58,8 +58,8 @@ bool InitConTable::initMaintenancePlanTable()
 		qDebug()<<"searchANDCreateTable() H_MAINTENANCE_PLAN ERROR";
 		return false;
 	}
-	QString H_MAINTENANCE_PLAN_tableview = "delete from H_MAINTENANCE_PLAN";
-	executeSQL(H_MAINTENANCE_PLAN_tableview,0);//清空表	
+	//QString H_MAINTENANCE_PLAN_tableview = "delete from H_MAINTENANCE_PLAN";
+	//executeSQL(H_MAINTENANCE_PLAN_tableview,0);//清空表	
 	return true;
 }
 bool InitConTable::initDPCPointTable()
@@ -69,8 +69,8 @@ bool InitConTable::initDPCPointTable()
 		qDebug()<<"searchANDCreateTable() H_DPC_OPTRECORD ERROR";
 		return false;
 	}
-	QString H_DPC_OPTRECORD_tableview = "delete from H_DPC_OPTRECORD";
-	executeSQL(H_DPC_OPTRECORD_tableview,0);//清空表	
+	//QString H_DPC_OPTRECORD_tableview = "delete from H_DPC_OPTRECORD";
+	//executeSQL(H_DPC_OPTRECORD_tableview,0);//清空表	
 	return true;
 }
 bool InitConTable::initLineLoadTable()
@@ -80,8 +80,8 @@ bool InitConTable::initLineLoadTable()
 		qDebug()<<"searchANDCreateTable() H_FEEDER_OVERLOAD ERROR";
 		return false;
 	}
-	QString H_FEEDER_OVERLOAD_tableview = "delete from H_FEEDER_OVERLOAD";
-	executeSQL(H_FEEDER_OVERLOAD_tableview,0);//清空表	
+	//QString H_FEEDER_OVERLOAD_tableview = "delete from H_FEEDER_OVERLOAD";
+	//executeSQL(H_FEEDER_OVERLOAD_tableview,0);//清空表	
 	return true;
 }
 bool InitConTable::initSignInAndOutTable()
@@ -102,8 +102,8 @@ bool InitConTable::initWorkHoursTable()
 		qDebug()<<"searchANDCreateTable() H_WORK_HOURS ERROR";
 		return false;
 	}
-	QString H_WORK_HOURS_tableview = "delete from H_WORK_HOURS";
-	executeSQL(H_WORK_HOURS_tableview,0);//清空表	
+	//QString H_WORK_HOURS_tableview = "delete from H_WORK_HOURS";
+	//executeSQL(H_WORK_HOURS_tableview,0);//清空表	
 	return true;
 }
 

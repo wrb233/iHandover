@@ -8,6 +8,9 @@ TARGET   = iHandover
 QMAKE_ORIG_TARGET = $(TARGET)
 
 
+TRANSLATIONS = iHandover_zh_CN.ts
+
+
 #commin pri
 include($(CPS_ROOT)/CPS/compile/cps_common.pri)
                

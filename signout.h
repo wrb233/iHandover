@@ -4,7 +4,7 @@
 #include <QDateEdit>
 #include <QComboBox>
 #include <QPushButton>
-
+#include "libUserMS/UserMSInterface.h"
 #ifndef SIGNOUT_H
 #define SIGNOUT_H
  
@@ -34,7 +34,7 @@ public:
 
 
 	
-
+	
 
 
 
@@ -71,6 +71,11 @@ private:
 
 	//4获取交接班序号
 	QString signout_shitf;
+
+
+
+	//用户
+	std::list<UserObjectData>* signoutlistUser;
 
 	
 

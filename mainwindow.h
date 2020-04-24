@@ -9,7 +9,7 @@
 
 
 
-
+//经常用到
 extern	QDateTime SetTimeFromDB(ORMTimeStamp time);
 
 

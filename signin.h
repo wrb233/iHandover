@@ -4,7 +4,7 @@
 #include <QDateEdit>
 #include <QComboBox>
 #include <QPushButton>
-
+#include "libUserMS/UserMSInterface.h"
 #ifndef SIGNIN_H
 #define SIGNIN_H
  
@@ -55,6 +55,9 @@ private:
 
 	//4获取交接班序号
 	QString signin_shitf;
+
+	//用户
+	std::list<UserObjectData>* signinlistUser;
 
 	Ui::SignIn *ui;
 

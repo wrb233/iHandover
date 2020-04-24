@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'information.ui'
 **
-** Created: Tue Apr 14 11:09:41 2020
+** Created: Wed Apr 22 16:21:46 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -61,7 +61,7 @@ public:
     {
         if (Information->objectName().isEmpty())
             Information->setObjectName(QString::fromUtf8("Information"));
-        Information->resize(800, 600);
+        Information->resize(1328, 552);
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/images/information.png"), QSize(), QIcon::Normal, QIcon::Off);
         Information->setWindowIcon(icon);
@@ -199,8 +199,8 @@ public:
         label_4->setText(QApplication::translate("Information", "\346\254\241", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("Information", "\351\201\245\346\216\247\350\256\260\345\275\225", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_4), QApplication::translate("Information", "\347\272\277\350\267\257\350\264\237\350\275\275", 0, QApplication::UnicodeUTF8));
-        okButton->setText(QApplication::translate("Information", "OK", 0, QApplication::UnicodeUTF8));
-        cancelButton->setText(QApplication::translate("Information", "Cancel", 0, QApplication::UnicodeUTF8));
+        okButton->setText(QApplication::translate("Information", "\347\241\256\350\256\244\345\275\225\345\205\245", 0, QApplication::UnicodeUTF8));
+        cancelButton->setText(QApplication::translate("Information", "\345\217\226\346\266\210", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

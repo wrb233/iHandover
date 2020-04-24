@@ -57,7 +57,7 @@
      </spacer>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QTableView" name="SignInAndOut_tableView"/>
+     <widget class="QTableView" name="SignInAndOut_tableview"/>
     </item>
    </layout>
   </widget>

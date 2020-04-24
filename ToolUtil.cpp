@@ -1,5 +1,7 @@
 #include "ToolUtil.h"
 
+#include "confirm.h"
+
 
 extern Database *database;//实时数据库指针外部全局变量
 
@@ -9,6 +11,70 @@ extern Logger iHandoverLog;//log4c日志
 
 
 extern  bool isActiveFault;
+extern  QSettings *configIniRead;
+
+AType AT_ampRating;
+AType AT_BreakerType;
+AType AT_ChangeNum;
+AType AT_ChannelState;
+AType AT_ChildrenList;
+AType AT_CommitSyncEnd;
+AType AT_ControlResult;
+AType AT_DeviceProperty;
+AType AT_DPCPointLink;
+AType AT_DPSPointLink;
+AType AT_Energized;
+AType AT_Factory;
+AType AT_FaultState;
+AType AT_FeederLink;
+AType AT_KeyName;
+AType AT_Limit;
+AType AT_LoadState;
+AType AT_MeasLink;
+AType AT_MeasurementTypeLink;
+AType AT_Model;
+AType AT_MVPointLink;
+AType AT_Name;
+AType AT_ObjOrder;
+AType AT_OnlineStatus;
+AType AT_OnlineTime;
+AType AT_ParamMva;
+AType AT_ParentLink;
+AType AT_PowerState;
+AType AT_PSRLink;
+AType AT_RTEnergized;
+AType AT_State;
+AType AT_Value;
+AType AT_Vstate;
+AType AT_MemberOfLine;
+AType AT_UnbalancedState;
+AType AT_QualifiedState;
+AType AT_Quality;
+
+OType OT_Analog;
+OType OT_BSCPoint;
+OType OT_DCSwitch;
+OType OT_Disconnector;
+OType OT_Discrete;
+OType OT_DistributionTransformer;
+OType OT_DMSCommunicateUnit;
+OType OT_DPCPoint;
+OType OT_DPSPoint;
+OType OT_Feeder;
+OType OT_Folder;
+OType OT_IncrementCommit;
+OType OT_LoadBreakSwitch;
+OType OT_Machine;
+OType OT_MVPoint;
+OType OT_PMSBreaker;
+OType OT_PMSBusbar;
+OType OT_PMSDoubleWindingTransformer;
+OType OT_PMSRoot;
+OType OT_PMSStation;
+OType OT_PMSTerminal;
+OType OT_PMSThreeWindingTransformer;
+OType OT_SubControlArea;
+OType OT_TransformerWinding;
 
 
 ToolUtil::ToolUtil():QObject()
@@ -21,6 +87,43 @@ ToolUtil::~ToolUtil()
 
 }
 
+bool ToolUtil::initOTypeAndAType()
+{
+	try
+	{
+		
+		AT_Name = database->matchAType("Name");
+		
+	}
+	catch (Exception& e)
+	{
+		return false;
+	}
+	return true;
+}
+
+QString ToolUtil::getHisRecordConf(QString key)
+{
+	if(NULL==configIniRead)
+	{
+		char* cpsenv = getenv("CPS_ENV");
+		QString cfgPath = QString::fromUtf8(cpsenv) + "/etc/" + "iHandover.ini"; 
+		QFile cfgFile(cfgPath);  
+		if (!cfgFile.exists())
+		{
+			QSettings *configIniWrite = new QSettings(cfgPath, QSettings::IniFormat);   
+			configIniWrite->setValue("/FaultTolerance/config", "on");
+			configIniWrite->setValue("/InfoQueue/size", "1000000");
+			configIniWrite->setValue("/Debug/config", "on");
+			delete configIniWrite;
+		}
+		configIniRead = new QSettings(cfgPath, QSettings::IniFormat); 
+	}
+
+	QString returnValue = configIniRead->value(key).toString();  
+
+	return returnValue;
+}
 
 
 /************************************************************************/
@@ -112,5 +215,196 @@ bool ToolUtil::UpdateConnectDB(DBPOOLHANDLE dbPoolHandle)
 	return true;
 }
 
+void ToolUtil::myDebug(QString content)
+{
+	if ("on"==ToolUtil::getHisRecordConf("/Debug/config"))
+	{
+		qDebug()<<content<< endl; ;
+	}
+}
+
+bool ToolUtil::databaseRead(ObId obId, AType aType, Data* data)
+{
+	try
+	{
+		database->read(obId, aType, data);
+	}
+	catch (Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(obId)+": DATABASE READ AT "+QString::number(aType)+" ERROR" + e.getStackTrace().c_str());
+		return false;
+	}
+	return true;
+}
+
+bool ToolUtil::databaseReadTime(ObId obId, AType aType, Data* data, timespec_t &time)
+{
+	try
+	{
+		Request req;
+		req.set(obId,aType,data,NULL,0,NORMAL_WRITE,&time);
+		database->read(&req);
+	}
+	catch (Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(obId)+": DATABASE READ Time ERROR");
+		return false;
+	}
+	return true;
+}
+
+OType ToolUtil::databaseMatchOType(const char* name)
+{
+	OType oType = 0;
+	try
+	{
+		oType = database->matchOType(name);
+	}
+	catch (Exception& e)
+	{
+		ToolUtil::myDebug(QString::fromUtf8(name)+": DATABASE MATCH OT ERROR");
+	}
+	return oType;
+}
+
+OType ToolUtil::databaseExtractOType(ObId obId)
+{
+	OType oType = 0;
+	try
+	{
+		oType = database->extractOType(obId);
+	}
+	catch (Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(obId)+": DATABASE Extract OT ERROR");
+	}
+	return oType;
+}
+
+int ToolUtil::databaseFind(OType oType, const Condition* conditions, int numberOfConditions,
+	ObId* objects, int maximumNumberOfObjects)
+{
+	int num = 0;
+	try
+	{
+		num = database->find(oType, conditions, numberOfConditions, objects, maximumNumberOfObjects);
+	}
+	catch (Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(oType)+": DATABASE Find OT ERROR");
+	}
+	return num;
+}
+
+ObId ToolUtil::findOTypeByObId(ObId obId, OType toFindOType, OType stopOType)
+{
+	ObId toFindObId = 0;
+	LinkData parentLinkData = 0;
+	ToolUtil::databaseRead(obId, AT_ParentLink, &parentLinkData);
+	if (parentLinkData!=0)
+	{
+		OType oType = ToolUtil::databaseExtractOType((ObId)parentLinkData);
+		if (oType==toFindOType)
+		{
+			toFindObId = (ObId)parentLinkData;
+		}else if (oType!=stopOType)
+		{
+			ObId tempObId = ToolUtil::findOTypeByObId((ObId)parentLinkData, toFindOType, stopOType);
+			if (0!=tempObId)
+			{
+				toFindObId = tempObId;
+			}
+		}
+	}
+	return toFindObId;
+}
+
+int ToolUtil::findOTypeFromChildList(ObId obId, OType toFindOType, ContainerData &obIds)
+{
+	ContainerData childrenList;
+	ToolUtil::databaseRead(obId, AT_ChildrenList, &childrenList);
+	int sonNum = childrenList.getNumberOfElements();
+	if (sonNum > 0) {
+		const ObId *childrenObId = childrenList.getObIds();
+		for (int i = 0; i < sonNum; i++) {
+			OType sonOType = ToolUtil::databaseExtractOType(childrenObId[i]);
+			if (sonOType == toFindOType) {
+				obIds.add(childrenObId[i]);
+			}
+		}
+	}
+	return obIds.getNumberOfElements();
+}
+
+int ToolUtil::findOTypeByObId(ObId obId, QList<OType> toFindOTypes, ContainerData &obIds)
+{
+	ContainerData find_obids;
+	find_obids.add(obId);
+	foreach(OType otype, toFindOTypes) {
+		int findNum = find_obids.getNumberOfElements();
+		if (findNum <= 0)  continue;
+		const ObId *obid = find_obids.getObIds();
+		ContainerData child_obids;
+		for (int i = 0; i < findNum; i++) {
+			findOTypeFromChildList(obid[i], otype, child_obids);
+		}
+		find_obids = child_obids;
+	}
+	obIds = find_obids;
+	return obIds.getNumberOfElements();
+}
+
+QDateTime ToolUtil::convertTimespecToQDatetime(timespec_t ts)
+{
+	/*time_t t = ts.tv_sec;
+	long tn = ts.tv_nsec;
+	QDateTime timeTemp = QDateTime::fromTime_t(t);
+	QString timeS = timeTemp.toString("yyyy-MM-dd hh:mm:ss");
+	QString timeM = QString::number(tn/1000000);
+	QString timeString = timeS + "." + timeM;
+	QDateTime time = QDateTime::fromString(timeString, "yyyy-MM-dd hh:mm:ss.zzz");
+	qDebug()<<time;
+	qDebug()<<time.toString("yyyy-MM-dd hh:mm:ss.zzz");
+	return time;*/
+	int year, month, day, hour, minute, second, ms;
+	OMSTime omT = OMSTime( ts );
+	omT.getDateTimeFields( &year, &month, &day, &hour, &minute, &second, &ms );
+
+	QTime q_tm = QTime( hour, minute, second, ms/1000	);
+	QDate q_dt = QDate( year, month, day );
+	QDateTime datetime = QDateTime( q_dt, q_tm );
+	QString strtime = datetime.toString("yyyy-MM-dd hh:mm:ss.zzz");
+	qDebug()<<strtime;
+
+	return datetime;
+
+}
+
+QString ToolUtil::convertQMapToJson(QList<QMap<QString,QString> > list)
+{
+	QString json = "";
+
+	QString jsonArrayStart = "[";
+	QString jsonArrayEnd = "]";	
+	QString jsonObjectStart = "{";
+	QString jsonObjectEnd = "}";
+	QString jsonObject = "\"%1\":\"%2\"";
+
+	for (int i=0;i<list.size();i++)
+	{
+		QMap<QString,QString>::iterator it; 
+		QString jsonTemp = "";
+		for ( it = list[i].begin(); it != list[i].end(); ++it )
+		{
+			jsonTemp = jsonTemp.append(jsonObject.arg(it.key()).arg(it.value())).append(",");
+		}
+		jsonTemp = jsonTemp.left(jsonTemp.length()-1);
+		json = json.append(jsonObjectStart).append(jsonTemp).append(jsonObjectEnd).append(",");
+	}
+	json = json.left(json.length()-1);	
+	json = jsonArrayStart.append(json).append(jsonArrayEnd);
+	
+	return json;
+}
 
 
