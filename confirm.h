@@ -19,19 +19,19 @@ class Confirm;
  
 class Confirm : public QDialog
 {
-    Q_OBJECT //Ê¹ÓÃĞÅºÅÓë²ÛĞèÒªµÄºê
+    Q_OBJECT //ä½¿ç”¨ä¿¡å·ä¸æ§½éœ€è¦çš„å®
 public:
-    explicit Confirm(QWidget *parent = 0);  //explicit ·ÀÖ¹ÆçÒå
+    explicit Confirm(QWidget *parent = 0);  //explicit é˜²æ­¢æ­§ä¹‰
     ~Confirm();
 
-	//7¸öÊôĞÔ
+	//7ä¸ªå±æ€§
 	QDateTime getcurDateTimedata();
 	QString getsigninnamedata();
 	QString getsignoutnamedata();
 	QDateTime getsigninandoutTime_QDateEditdata();
 	QString getsigninandout_shitfdata();
 	QString getsigninandoutNote_QTextEditdata();
-	QString getworkplacenamedata();
+	//QString getworkplacenamedata();
 
 
 	
@@ -48,34 +48,34 @@ public slots:
 		//void insertSignInAndOutTable();
 private:
 	
-	//¶¨ÒåprivateÊôĞÔĞÅÏ¢£¬¹©¸øÆäËûÀàÊ¹ÓÃ
+	//å®šä¹‰privateå±æ€§ä¿¡æ¯ï¼Œä¾›ç»™å…¶ä»–ç±»ä½¿ç”¨
 
-	//½»°àÈË½Ó°àÈËÓÃ»§
+	//äº¤ç­äººæ¥ç­äººç”¨æˆ·
 	std::list<UserObjectData>* signoutlistUser;
 	std::list<UserObjectData>* signinlistUser;
 
-	//1»ñÈ¡µ±Ç°ÈÕÆÚÊ±¼ä
+	//1è·å–å½“å‰æ—¥æœŸæ—¶é—´
 	QDateTime curDateTime;
 
-	//2»ñÈ¡ÓÃ»§Ñ¡È¡µÄ½»°àÈË
+	//2è·å–ç”¨æˆ·é€‰å–çš„äº¤ç­äºº
 	QString signoutname;
 	
 
-	//3»ñÈ¡ÓÃ»§Ñ¡È¡µÄ½Ó°àÈË
+	//3è·å–ç”¨æˆ·é€‰å–çš„æ¥ç­äºº
 	QString signinname;
 	
 
-	//4»ñÈ¡½»½Ó°àÊ±¼ä
+	//4è·å–äº¤æ¥ç­æ—¶é—´
 	QDateTime signinandoutTime_QDateEdit;
 
-	//5»ñÈ¡½»½Ó°àĞòºÅ
+	//5è·å–äº¤æ¥ç­åºå·
 	QString signinandout_shitf;
 
-	//6»ñÈ¡½»½Ó±¸×¢ÄÚÈİ
+	//6è·å–äº¤æ¥å¤‡æ³¨å†…å®¹
 	QString signinandoutNote_QTextEdit;
 
-	//7»ñÈ¡ÓÃ»§Ñ¡È¡µÄÉÏ°àµØµã
-	QString workplacename;
+	//7è·å–ç”¨æˆ·é€‰å–çš„ä¸Šç­åœ°ç‚¹
+	//QString workplacename;
 
 
 	

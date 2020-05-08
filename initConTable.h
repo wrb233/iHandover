@@ -3,13 +3,13 @@ class InitConTable: public QtApplication
 {
 public:
 
-	//构造函数
+	
 	InitConTable(int &argc, char **argv,
 		SignalHandler sigtermHandler,
 		const OptionList& optionList,
 		EnvironmentScope environmentScope);
 
-	//析构函数
+	
 	~InitConTable();
 
 	bool initAllTables();
@@ -22,7 +22,20 @@ public:
 	
 	void initType();
 	ObId findOTypeByObId(ObId obId, OType toFindOType, OType stopOType);
+
+
+	ObId getDPSPointLink(ObId dmsObjId);
+	ObId getPSRLink(ObId dmsObjId);
+
+	ObId getMemberOfLineLink(ObId dmsObjId);
+	
+	
+
+
+
 	static bool executeSQL(QString sql, ObId temp);
+
+	
 	
 
 	OType OT_PMSBreaker;

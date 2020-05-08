@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Mon Apr 20 11:32:13 2020
+** Created: Thu May 7 09:29:40 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -19,6 +19,7 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QMainWindow>
+#include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
 #include <QtGui/QSpacerItem>
@@ -36,6 +37,8 @@ public:
     QAction *actionSignOut;
     QAction *actionSignIn;
     QAction *actionConfirm;
+    QAction *actionPrint;
+    QAction *actionConfiguration;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QSplitter *splitter;
@@ -46,6 +49,7 @@ public:
     QSpacerItem *horizontalSpacer;
     QTableView *SignInAndOut_tableview;
     QMenuBar *menuBar;
+    QMenu *menu;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -77,6 +81,16 @@ public:
         QIcon icon3;
         icon3.addFile(QString::fromUtf8(":/images/confirm.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionConfirm->setIcon(icon3);
+        actionPrint = new QAction(MainWindow);
+        actionPrint->setObjectName(QString::fromUtf8("actionPrint"));
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8(":/images/print.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionPrint->setIcon(icon4);
+        actionConfiguration = new QAction(MainWindow);
+        actionConfiguration->setObjectName(QString::fromUtf8("actionConfiguration"));
+        QIcon icon5;
+        icon5.addFile(QString::fromUtf8(":/images/configuration.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionConfiguration->setIcon(icon5);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -114,6 +128,8 @@ public:
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 1415, 26));
+        menu = new QMenu(menuBar);
+        menu->setObjectName(QString::fromUtf8("menu"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -125,11 +141,15 @@ public:
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
 
+        menuBar->addAction(menu->menuAction());
+        menu->addAction(actionConfiguration);
         mainToolBar->addAction(actionSignOut);
         mainToolBar->addSeparator();
         mainToolBar->addAction(actionSignIn);
         mainToolBar->addSeparator();
         mainToolBar->addAction(actionConfirm);
+        mainToolBar->addSeparator();
+        mainToolBar->addAction(actionPrint);
         mainToolBar->addSeparator();
 
         retranslateUi(MainWindow);
@@ -152,8 +172,14 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionConfirm->setToolTip(QApplication::translate("MainWindow", "\347\241\256\350\256\244", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
+        actionPrint->setText(QApplication::translate("MainWindow", "\346\211\223\345\215\260", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionPrint->setToolTip(QApplication::translate("MainWindow", "\346\211\223\345\215\260", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        actionConfiguration->setText(QApplication::translate("MainWindow", "\351\205\215\347\275\256", 0, QApplication::UnicodeUTF8));
         period->setText(QApplication::translate("MainWindow", " \350\207\263", 0, QApplication::UnicodeUTF8));
         queryAtTime->setText(QApplication::translate("MainWindow", "\346\237\245\350\257\242", 0, QApplication::UnicodeUTF8));
+        menu->setTitle(QApplication::translate("MainWindow", "\347\217\255\345\267\245\344\275\234\351\205\215\347\275\256", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

@@ -13,7 +13,9 @@
 
 #include "common.h"
 #include "QHash"
+#include "QList"
 //#define 
+
 typedef struct timeOfrecovery//something about time change
 {
 	int difference;
@@ -185,10 +187,16 @@ public:
 	~initializtion();
 
 
+	void initLineload();
+	ObId getMeasurementTypeLink(ObId dmsObjId);
+	int BreakerType(ObId dmsObjId);
+
 	
 	 
 
 };
+
+//QList <QString> MVPointlist; 
 //void updateKPIDB();
 //void queryData(QString sqlcheckpoint, QString sqlday, bool daychange);
 //void gatherDPCPoint();

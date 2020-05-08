@@ -12,6 +12,9 @@
 #include "confirm.h"
 #include "ToolUtil.h"
 
+#include "print.h"
+#include "configuration.h"
+
 #include <QCoreApplication>
 
 
@@ -29,19 +32,42 @@ MainWindow::MainWindow(QWidget *parent) :
     QString current_date =current_date_time.toString("yyyyMMdd");
 	QDate date = QDate::fromString(current_date,"yyyyMMdd");
 	ui->startTime->setDate(date);
+	ui->startTime->setDisplayFormat("yyyy/MM/dd");
 	ui->endTime->setDate(date);
+	ui->endTime->setDisplayFormat("yyyy/MM/dd");
 	
 	
+	ui->SignInAndOut_tableview->setSelectionBehavior(QAbstractItemView::SelectRows);
+	ui->SignInAndOut_tableview->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+	connect(ui->SignInAndOut_tableview,SIGNAL(doubleClicked  (const QModelIndex)),this,SLOT(slotDoubleClickTreeNode(const QModelIndex)));
+
+
+
 	//点击交班动作触发交班页面
 	connect(ui->actionSignOut,SIGNAL(triggered()),this, SLOT(showSignOutDialog()));
 	//点击接班动作触发接班页面
 	connect(ui->actionSignIn,SIGNAL(triggered()),this, SLOT(showSignInDialog()));
 	//点击确认动作触发交接班确认页面
 	connect(ui->actionConfirm,SIGNAL(triggered()),this, SLOT(showConfirmDialog()));
+
+
+	connect(ui->actionPrint,SIGNAL(triggered()),this, SLOT(showPrintDialog()));
+
+
+
+	connect(ui->actionConfiguration,SIGNAL(triggered()),this, SLOT(showConfigurationForm()));
+
+
+
+
+
 	//点击查询按钮按时间间隔查询交接班交接记录总表
 	connect(ui->queryAtTime,SIGNAL(clicked()),this, SLOT(queryAtTime()));
 	//一进入界面先展示空的交接班交接记录总表
 	showSignInAndOut();
+
+	
 	
 }
 
@@ -65,8 +91,8 @@ void MainWindow::showSignInAndOut()
     SignInAndOut_model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("successor")));
     SignInAndOut_model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("work_day")));
     SignInAndOut_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("work_index")));
-	SignInAndOut_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("note")));
-	SignInAndOut_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("work_place")));	
+	SignInAndOut_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("signinandoutnote")));
+	//SignInAndOut_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("work_place")));	
 	//利用setModel()方法将数据模型与QTableView绑定
 	ui->SignInAndOut_tableview->setModel(SignInAndOut_model);
 	//QTableView平均分配列宽
@@ -76,11 +102,12 @@ void MainWindow::showSignInAndOut()
 	RECORDSETHANDLE SignInAndOutSetHandle = CPS_ORM_RsNewRecordSet();
 	//QString sqlSignInAndOut = "select TIME, HANDOVER, SUCCESSOR, WORK_DAY, WORK_INDEX, NOTE, WORK_PLACE from H_SIGNINANDOUT order by TIME";
 
-	QString sqlSignInAndOut = "select a.TIME, a.HANDOVER, a.SUCCESSOR, a.WORK_DAY, b.WORK_NAME, a.NOTE, a.WORK_PLACE from H_SIGNINANDOUT a,H_WORK_HOURS b where a.WORK_INDEX=b.WORK_INDEX order by a.TIME";
-	
-		int rowsOfTer = CPS_ORM_RsLoadData(SignInAndOutSetHandle,sqlSignInAndOut.toUtf8().data(),dbPoolHandle);
+	//QString sqlSignInAndOut = "select a.TIME, a.HANDOVER, a.SUCCESSOR, a.WORK_DAY, b.WORK_NAME, a.NOTE, a.WORK_PLACE from H_SIGNINANDOUT a,H_WORK_HOURS b where a.WORK_INDEX=b.WORK_INDEX order by a.TIME";
+	QString sqlSignInAndOut = "select a.TIME, a.HANDOVER, a.SUCCESSOR, a.WORK_DAY, b.WORK_NAME, a.NOTE from H_SIGNINANDOUT a,H_WORK_HOURS b where a.WORK_INDEX=b.WORK_INDEX order by a.TIME";
+
+		int rowsOfTersqlSignInAndOut = CPS_ORM_RsLoadData(SignInAndOutSetHandle,sqlSignInAndOut.toUtf8().data(),dbPoolHandle);
 		AT_Name = database->matchAType("Name");
-		for (int i=0;i<rowsOfTer;i++)
+		for (int i=0;i<rowsOfTersqlSignInAndOut;i++)
 		{
 			ORMTimeStamp signinandouttime = CPS_ORM_RsGetTimeValue(SignInAndOutSetHandle, i, 0);
 			QDateTime strsigninandouttime = SetTimeFromDB(signinandouttime);
@@ -116,6 +143,7 @@ void MainWindow::showSignInAndOut()
 			//int workindex = CPS_ORM_RsGetNumberValue(SignInAndOutSetHandle,i,4);
 			//QStandardItem* item5 = new QStandardItem(QString::number(workindex));
 			
+
 			std::string workname = CPS_ORM_RsGetStringValue(SignInAndOutSetHandle,i,4);
 			QStandardItem* item5 = new QStandardItem(QString::fromUtf8(workname.c_str()));
 			
@@ -130,11 +158,15 @@ void MainWindow::showSignInAndOut()
 			//QStandardItem* item6 = new QStandardItem(QString::fromStdString(note));
 			//QStandardItem* item6 = new QStandardItem(QObject::tr(note));
 
+
+			/*
 			ObId workplaceobid = CPS_ORM_RsGetNumberValue(SignInAndOutSetHandle,i,6);
 			QStandardItem* item7 = new QStandardItem(QString::number(workplaceobid));
-			
+			*/
+
+
 			QList<QStandardItem*> item;
-            item << item1 << item2 << item3 << item4 << item5 << item6 << item7;
+            item << item1 << item2 << item3 << item4 << item5 << item6;
             SignInAndOut_model->appendRow(item);
 	
 		}
@@ -184,7 +216,7 @@ void MainWindow::showSignOutDialog()
 		QString strstarttime;//初始化左时间
 		RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
 		QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX="+startshift;
-		int rowsOfTer = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
+		int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
 		int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
 		QString strhour = QString::number(work_start);
 		if (strhour.length()==1)
@@ -199,20 +231,66 @@ void MainWindow::showSignOutDialog()
 		//QString strstarttime = strstartdate+' '+strhourminsec;
 		CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
 
-		//判断新表里面数据条数
-		RECORDSETHANDLE isNullSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqlisNull = "select COUNT(*) from H_FA_ACCIDENTINFO";
-		int rowsOfTers = CPS_ORM_RsLoadData(isNullSetHandle,sqlisNull.toUtf8().data(),dbPoolHandle);
-		int items = CPS_ORM_RsGetNumberValue(isNullSetHandle,0,0);
-		CPS_ORM_RsFreeRecordSet(isNullSetHandle);
 
-		//先从老表里面展示已有数据
-		if (items == 0)
-			information.firstShowTableViewsFromOldTables(strstarttime, strendtime ,startshift);
-		//新表里面已经有数据了，先把新表数据展示，然后再查老表
+
+
+		//判断事故信息新表里面数据条数
+		RECORDSETHANDLE isfaaccidentNullSetHandle = CPS_ORM_RsNewRecordSet();
+		QString sqlfaaccidentisNull = "select COUNT(*) from H_FA_ACCIDENTINFO";
+		int rowsOfTersqlfaaccidentisNull = CPS_ORM_RsLoadData(isfaaccidentNullSetHandle,sqlfaaccidentisNull.toUtf8().data(),dbPoolHandle);
+		int itemsoffaaccident = CPS_ORM_RsGetNumberValue(isfaaccidentNullSetHandle,0,0);
+		CPS_ORM_RsFreeRecordSet(isfaaccidentNullSetHandle);
+
+		//先从事故信息老表里面展示已有数据
+		if (itemsoffaaccident == 0)
+			information.firstshowFAaccidentInfo(strstarttime, strendtime ,startshift);
+		//事故信息新表里面已经有数据了，先把新表数据展示，然后再查老表
 		else
-			information.secondShowTableViewsFromOldTables(strstarttime, strendtime ,startshift);
+			information.secondshowFAaccidentInfo(strstarttime, strendtime ,startshift);
 
+		//判断检修计划新表里面数据条数
+		RECORDSETHANDLE ismaintenanceplanNullSetHandle = CPS_ORM_RsNewRecordSet();
+		QString sqlmaintenanceplanisNull = "select COUNT(*) from H_MAINTENANCE_PLAN";
+		int rowsOfTersqlmaintenanceplanisNull = CPS_ORM_RsLoadData(ismaintenanceplanNullSetHandle,sqlmaintenanceplanisNull.toUtf8().data(),dbPoolHandle);
+		int itemsofmaintenanceplan = CPS_ORM_RsGetNumberValue(ismaintenanceplanNullSetHandle,0,0);
+		CPS_ORM_RsFreeRecordSet(ismaintenanceplanNullSetHandle);
+
+		//先从检修计划老表里面展示已有数据
+		if (itemsofmaintenanceplan == 0)
+			information.firstshowMaintenancePlan(strstarttime, strendtime ,startshift);
+		//检修计划新表里面已经有数据了，先把新表数据展示，然后再查老表
+		else
+			information.secondshowMaintenancePlan(strstarttime, strendtime ,startshift);
+
+		//判断遥控记录新表里面数据条数
+		RECORDSETHANDLE isdpcpointNullSetHandle = CPS_ORM_RsNewRecordSet();
+		QString sqldpcpointisNull = "select COUNT(*) from H_DPC_OPTRECORD";
+		int rowsOfTersqldpcpointisNull = CPS_ORM_RsLoadData(isdpcpointNullSetHandle,sqldpcpointisNull.toUtf8().data(),dbPoolHandle);
+		int itemsofdpcpoint = CPS_ORM_RsGetNumberValue(isdpcpointNullSetHandle,0,0);
+		CPS_ORM_RsFreeRecordSet(isdpcpointNullSetHandle);
+
+		//先从遥控记录老表里面展示已有数据
+		if (itemsofdpcpoint == 0)
+			information.firstshowDPCOptRecord(strstarttime, strendtime ,startshift);
+		//遥控记录新表里面已经有数据了，先把新表数据展示，然后再查老表
+		else
+			information.secondshowDPCOptRecord(strstarttime, strendtime ,startshift);
+
+			
+
+		//判断线路重载新表里面数据条数
+		RECORDSETHANDLE isfeederoverloadNullSetHandle = CPS_ORM_RsNewRecordSet();
+		QString sqlfeederoverloadisNull = "select COUNT(*) from H_FEEDER_OVERLOAD";
+		int rowsOfTersqlfeederoverloadisNull = CPS_ORM_RsLoadData(isfeederoverloadNullSetHandle,sqlfeederoverloadisNull.toUtf8().data(),dbPoolHandle);
+		int itemsoffeederoverload = CPS_ORM_RsGetNumberValue(isfeederoverloadNullSetHandle,0,0);
+		CPS_ORM_RsFreeRecordSet(isfeederoverloadNullSetHandle);
+
+		//先从线路重载老表里面展示已有数据
+		if (itemsoffeederoverload == 0)
+			information.firstshowFeederOverload(strstarttime, strendtime ,startshift);
+		//线路重载新表里面已经有数据了，先把新表数据展示，然后再查老表
+		else
+			information.secondshowFeederOverload(strstarttime, strendtime ,startshift);
 
 		
 
@@ -228,14 +306,28 @@ void MainWindow::showSignOutDialog()
 			qDebug()<<informationcurDateTime;
 
 
-
-			if (items == 0)
-				information.firstwriteTables(strstarttime, strendtime, startshift, informationcurDateTime);
+			//事故信息写入
+			if (itemsoffaaccident == 0)
+				information.firstwriteFAaccidentTable(strstarttime, strendtime, startshift, informationcurDateTime);
 
 			else
-				information.secondwriteTables(strstarttime, strendtime, startshift, informationcurDateTime);
+				information.secondwriteFAaccidentTable(strstarttime, strendtime, startshift, informationcurDateTime);
 
 
+			
+			//遥控记录写入
+			if (itemsofdpcpoint == 0)
+				information.firstwriteDPCOptRecordTable(strstarttime, strendtime, startshift, informationcurDateTime);
+			//遥控记录新表里面已经有数据了，先把新表数据展示，然后再查老表
+			else
+				information.secondwriteDPCOptRecordTable(strstarttime, strendtime, startshift, informationcurDateTime);
+
+			//线路重载写入
+			if (itemsoffeederoverload == 0)
+				information.firstwriteFeederOverloadTable(strstarttime, strendtime, startshift, informationcurDateTime);
+			//线路重载新表里面已经有数据了，先把新表数据展示，然后再查老表
+			else
+				information.secondwriteFeederOverloadTable(strstarttime, strendtime, startshift, informationcurDateTime);
 
 
 
@@ -259,59 +351,64 @@ void MainWindow::showSignInDialog()
 
 	if (signin.exec()==QDialog::Accepted)
 	{
-
-		/*
-		//1获取点击接班时的当前日期时间
+		//1获取点击接班时的当前日期时间,右时间
 		QDateTime signincurDateTime=signin.getcurDateTimedata();
-
 		//2获取用户选取的接班人
 		QString signinname = signin.getsigninnamedata();
-
-
-		//3获取接班时间
+		//3获取接班时间,左时间
 		QDateTime signinTime_QDateEdit = signin.getsigninTime_QDateEditdata();
-
 		//4获取接班序号
-		short signin_shitf = signin.getsignin_shitfdata();
+		QString signin_shitf = signin.getsignin_shitfdata();
 
-
-
-		
-
-
-		//information.firstShowTableViewsFromOldTables(signincurDateTime, signinTime_QDateEdit, signin_shitf);
-		
-		//获取用户选择的接班时间段
-		QDateTime endtime = signincurDateTime;
-		//qDebug()<<endtime;
-		QDateTime startdate = signinTime_QDateEdit;
-		QString strstartdate = startdate.toString("yyyy-MM-dd");  
-		QString startshift = signin_shitf;
-
-		/*
-		QString strBuffer;
-		if (startshift == "1")
-		{
-			strBuffer = " 06:00:00";  	
-		}
-		else if (startshift == "2")
-		{
-			strBuffer = " 14:00:00";  
-		}
-		else if (startshift == "3")
-		{
-			strBuffer = " 22:00:00";  
-		}
-		QString strstarttime = strstartdate.append(strBuffer);
-		QDateTime starttime = QDateTime::fromString(strstarttime, "yyyy-MM-dd hh:mm:ss");
-
-		*/
 		Information information;
 
+
+		//获取用户选择的接班时间段，右时间
+		QDateTime endtime = information.getSignPageTime(signincurDateTime);
+		QString strendtime = endtime.toString("yyyy-MM-dd hh:mm:ss");
+		//qDebug()<<endtime;
+
+		//获取用户选择的接班时间段，左时间
+		QDateTime startdate = information.getSignPageDate(signinTime_QDateEdit);
+		QString strstartdate = startdate.toString("yyyy-MM-dd");  
+
+		QString startshift = information.getSignPageShift(signin_shitf);
+
+
+		//根据date和shift拼接字符串左时间时间点
+		QString strstarttime;//初始化左时间
+		RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
+		QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX="+startshift;
+		int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
+		int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
+		QString strhour = QString::number(work_start);
+		if (strhour.length()==1)
+			strstarttime = QString("%1 0%2:00:00")
+			.arg(strstartdate)
+			.arg(strhour);
+		else
+			strstarttime = QString("%1 %2:00:00")
+			.arg(strstartdate)
+			.arg(strhour);
+		//qDebug()<<work_start;
+		//QString strstarttime = strstartdate+' '+strhourminsec;
+		CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
+
+
+
+		qDebug()<<strstarttime;
+		qDebug()<<strendtime;
+
+		//查我自己建的四张新表里的数据，如果没有就只展示列名称
+
+		information.showsigninFAaccidentInfo(strstarttime, strendtime ,startshift);
+		information.showsigninMaintenancePlan(strstarttime, strendtime ,startshift);
+		information.showsigninDPCOptRecord(strstarttime, strendtime ,startshift);
+		information.showsigninFeederOverload(strstarttime, strendtime ,startshift);
+
 		information.exec();
-	}
 
-
+}
 }
 
 void MainWindow::showConfirmDialog()
@@ -348,7 +445,72 @@ void MainWindow::showConfirmDialog()
 	*/
 }
 
+void MainWindow::slotDoubleClickTreeNode(const QModelIndex index)
+{
+	
+	/*
+	
+	//1获取点击接班时的当前日期时间,右时间
+	QDateTime signincurDateTime=QDateTime::currentDateTime();
+	//2获取用户选取的接班人
+	QString signinname = "";
+	//3获取接班时间,左时间
+	QDateTime signinTime_QDateEdit = QDateTime::currentDateTime();
+	//4获取接班序号
+	QString signin_shitf = "1";
 
+	Information information;
+
+
+	//获取用户选择的接班时间段，右时间
+	QDateTime endtime = information.getSignPageTime(signincurDateTime);
+	QString strendtime = endtime.toString("yyyy-MM-dd hh:mm:ss");
+	//qDebug()<<endtime;
+
+	//获取用户选择的接班时间段，左时间
+	QDateTime startdate = information.getSignPageDate(signinTime_QDateEdit);
+	QString strstartdate = startdate.toString("yyyy-MM-dd");  
+
+	QString startshift = information.getSignPageShift(signin_shitf);
+
+
+	//根据date和shift拼接字符串左时间时间点
+	QString strstarttime;//初始化左时间
+	RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
+	QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX="+startshift;
+	int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
+	int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
+	QString strhour = QString::number(work_start);
+	if (strhour.length()==1)
+		strstarttime = QString("%1 0%2:00:00")
+		.arg(strstartdate)
+		.arg(strhour);
+	else
+		strstarttime = QString("%1 %2:00:00")
+		.arg(strstartdate)
+		.arg(strhour);
+	//qDebug()<<work_start;
+	//QString strstarttime = strstartdate+' '+strhourminsec;
+	CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
+
+
+
+	qDebug()<<strstarttime;
+	qDebug()<<strendtime;
+
+	//查我自己建的四张新表里的数据，如果没有就只展示列名称
+
+	information.showsigninFAaccidentInfo(strstarttime, strendtime ,startshift);
+	information.showsigninMaintenancePlan(strstarttime, strendtime ,startshift);
+	information.showsigninDPCOptRecord(strstarttime, strendtime ,startshift);
+	information.showsigninFeederOverload(strstarttime, strendtime ,startshift);
+
+	information.exec();
+
+
+
+	*/
+}
 
 void MainWindow::queryAtTime()
 {
@@ -357,13 +519,13 @@ void MainWindow::queryAtTime()
 	//测试万金油
 	//QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 	QStandardItemModel *SignInAndOut_model = new QStandardItemModel();
-	SignInAndOut_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("交接确认时间")));
-	SignInAndOut_model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("交班人")));
-	SignInAndOut_model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("接班人")));
-	SignInAndOut_model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("交接日")));
-	SignInAndOut_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("交接班序号")));
-	SignInAndOut_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("交接备注内容")));
-	SignInAndOut_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("上班地点")));	
+	SignInAndOut_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("time")));
+	SignInAndOut_model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("handover")));
+	SignInAndOut_model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("successor")));
+	SignInAndOut_model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("work_day")));
+	SignInAndOut_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("work_index")));
+	SignInAndOut_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("signinandoutnote")));
+	//SignInAndOut_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("work_place")));	
 	//利用setModel()方法将数据模型与QTableView绑定
 	ui->SignInAndOut_tableview->setModel(SignInAndOut_model);
 	//QTableView平均分配列宽
@@ -378,17 +540,27 @@ void MainWindow::queryAtTime()
 							  where TIME between to_date('"+startTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss') and to_date('"+endTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss')+1";
 
 
-
+	/*
 	QString sqlSignInAndOut="select a.TIME, a.HANDOVER, a.SUCCESSOR, a.WORK_DAY, b.WORK_NAME, a.NOTE, a.WORK_PLACE from H_SIGNINANDOUT a,H_WORK_HOURS b \
 							where a.WORK_INDEX=b.WORK_INDEX and a.TIME between to_date('"+startTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss') and to_date('"+endTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss')+1 order by a.TIME";
+    */
 
-	int rowsOfTer = CPS_ORM_RsLoadData(SignInAndOutSetHandle,sqlSignInAndOut.toUtf8().data(),dbPoolHandle);
-	for (int i=0;i<rowsOfTer;i++)
+
+	QString sqlSignInAndOut="select a.TIME, a.HANDOVER, a.SUCCESSOR, a.WORK_DAY, b.WORK_NAME, a.NOTE from H_SIGNINANDOUT a,H_WORK_HOURS b \
+							where a.WORK_INDEX=b.WORK_INDEX and a.TIME between to_date('"+startTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss') and to_date('"+endTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss')+1 order by a.TIME";
+
+
+
+
+
+
+	int rowsOfTersqlSignInAndOut = CPS_ORM_RsLoadData(SignInAndOutSetHandle,sqlSignInAndOut.toUtf8().data(),dbPoolHandle);
+	for (int i=0;i<rowsOfTersqlSignInAndOut;i++)
 	{
 
 		ORMTimeStamp signinandouttime = CPS_ORM_RsGetTimeValue(SignInAndOutSetHandle, i, 0);
 		QDateTime strsigninandouttime = SetTimeFromDB(signinandouttime);
-		QStandardItem* item1 = new QStandardItem(strsigninandouttime.toString("yyyy-MM-dd hh:mm:ss.zzz"));
+		QStandardItem* item1 = new QStandardItem(strsigninandouttime.toString("yyyy-MM-dd hh:mm:ss"));
 		
 		ObId handoverobid = CPS_ORM_RsGetNumberValue(SignInAndOutSetHandle,i,1);
 		StringData handoverobiddata;
@@ -432,14 +604,18 @@ void MainWindow::queryAtTime()
 		//QStandardItem* item6 = new QStandardItem(QString::fromStdString(note));
 		//QStandardItem* item6 = new QStandardItem(QObject::tr(note));
 
+
+
+		/*
 		ObId workplaceobid = CPS_ORM_RsGetNumberValue(SignInAndOutSetHandle,i,6);
 		QStandardItem* item7 = new QStandardItem(QString::number(workplaceobid));
+		*/
 
 
 		
 
 		QList<QStandardItem*> item;
-		item << item1 << item2 << item3 << item4 << item5 << item6 << item7;
+		item << item1 << item2 << item3 << item4 << item5 << item6;
 		SignInAndOut_model->appendRow(item);
 
 	}
@@ -462,4 +638,42 @@ QDateTime SetTimeFromDB(ORMTimeStamp time)
 	QDateTime RecordTime =  QDateTime::fromString(recordtime,"yyyy-MM-dd hh:mm:ss.zzz");
 	//qDebug()<<"SetTimeFromDB(): "<<RecordTime.toString("yyyy-MM-dd hh:mm:ss.zzz");
 	return RecordTime;
+}
+
+
+
+
+void MainWindow::showPrintDialog()
+{
+    
+	
+	//测试万金油
+	//QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+	Print print;
+
+	//confirm.show();
+	if (print.exec()==QDialog::Accepted)
+	{
+	}
+	
+}
+
+
+
+
+void MainWindow::showConfigurationForm()
+{
+
+
+	//测试万金油
+	//QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+	Configuration configuration;
+
+	//confirm.show();
+	if (configuration.exec()==QDialog::Accepted)
+	{
+	}
+
 }

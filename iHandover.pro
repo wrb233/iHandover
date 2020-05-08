@@ -86,7 +86,10 @@ HEADERS += common.h\
            CreateTable.h\
 		   signout.h\
 		   signin.h\
-		   information.h
+		   information.h\
+		   print.h\
+		   configuration.h\
+		   confirm.h
            
 		   
 SOURCES += mainwindow.cpp\
@@ -98,12 +101,18 @@ SOURCES += mainwindow.cpp\
            CreateTable.cpp\
 		   signout.cpp\
 		   signin.cpp\
-		   information.cpp
+		   information.cpp\
+		   print.cpp\
+		   configuration.cpp\
+		   confirm.cpp
 
 FORMS    += mainwindow.ui\
 		    signout.ui\
 			signin.ui\
-			information.ui
+			information.ui\
+			print.ui\
+			configuration.ui\
+			confirm.ui
 
 RESOURCES += \
     ihandover.qrc

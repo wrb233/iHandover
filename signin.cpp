@@ -75,6 +75,7 @@ SignIn::SignIn(QWidget *parent) :
 	 QString current_date =current_date_time.toString("yyyyMMdd");
 	 QDate date = QDate::fromString(current_date,"yyyyMMdd");
 	 ui->signinTime_QDateEdit->setDate(date);
+	 ui->signinTime_QDateEdit->setDisplayFormat("yyyy/MM/dd");
     
 }
  SignIn::~SignIn()

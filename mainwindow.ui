@@ -70,6 +70,13 @@
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>班工作配置</string>
+    </property>
+    <addaction name="actionConfiguration"/>
+   </widget>
+   <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="iconSize">
@@ -95,6 +102,8 @@
    <addaction name="actionSignIn"/>
    <addaction name="separator"/>
    <addaction name="actionConfirm"/>
+   <addaction name="separator"/>
+   <addaction name="actionPrint"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -135,6 +144,27 @@
    </property>
    <property name="toolTip">
     <string>确认</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="ihandover.qrc">
+     <normaloff>:/images/print.png</normaloff>:/images/print.png</iconset>
+   </property>
+   <property name="text">
+    <string>打印</string>
+   </property>
+   <property name="toolTip">
+    <string>打印</string>
+   </property>
+  </action>
+  <action name="actionConfiguration">
+   <property name="icon">
+    <iconset resource="ihandover.qrc">
+     <normaloff>:/images/configuration.png</normaloff>:/images/configuration.png</iconset>
+   </property>
+   <property name="text">
+    <string>配置</string>
    </property>
   </action>
  </widget>

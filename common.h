@@ -37,8 +37,6 @@
 #include <log4cplus/helpers/sleep.h>
 #include <log4cplus/loggingmacros.h>
 
-//#include "OTypeAndATypeInit.h"
-
 using namespace log4cplus;
 using namespace log4cplus::helpers;
 

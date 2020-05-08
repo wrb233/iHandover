@@ -40,7 +40,16 @@ private slots:
 
 	void showConfirmDialog();
 
+	void showPrintDialog();
+
 	void queryAtTime();
+
+	void slotDoubleClickTreeNode(const QModelIndex index);
+
+
+	void showConfigurationForm();
+
+
 	
 //把用到的控件都重新定义一遍
 private:

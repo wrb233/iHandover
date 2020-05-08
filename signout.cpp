@@ -84,6 +84,7 @@ SignOut::SignOut(QWidget *parent) :
 	QString current_date =current_date_time.toString("yyyyMMdd");
 	QDate date = QDate::fromString(current_date,"yyyyMMdd");
 	ui->signoutTime_QDateEdit->setDate(date);
+	ui->signoutTime_QDateEdit->setDisplayFormat("yyyy/MM/dd");
 
     
 }

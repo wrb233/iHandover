@@ -20,41 +20,50 @@ class Information;
  
 class Information : public QDialog
 {
-    Q_OBJECT //使用信号与槽需要的宏
+    Q_OBJECT
 public:
-    explicit Information(QWidget *parent = 0);  //explicit 防止歧义
+    explicit Information(QWidget *parent = 0);
     ~Information();
+	void showsigninFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift);
+	void showsigninMaintenancePlan(QString strstarttime, QString strendtime, QString startshift);
+	void showsigninDPCOptRecord(QString strstarttime, QString strendtime, QString startshift);
+	void showsigninFeederOverload(QString strstarttime, QString strendtime, QString startshift);
+	
 
 
+
+	
 	void firstshowFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift);
 	void firstshowMaintenancePlan(QString strstarttime, QString strendtime, QString startshift);
 	void firstshowDPCOptRecord(QString strstarttime, QString strendtime, QString startshift);
 	void firstshowFeederOverload(QString strstarttime, QString strendtime, QString startshift);
-	void firstShowTableViewsFromOldTables(QString strstarttime, QString strendtime, QString startshift);
 	
-	void secondShowTableViewsFromOldTables(QString strstarttime, QString strendtime, QString startshift);
+	
 	void secondshowFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift);
 	void secondshowMaintenancePlan(QString strstarttime, QString strendtime, QString startshift);
 	void secondshowDPCOptRecord(QString strstarttime, QString strendtime, QString startshift);
 	void secondshowFeederOverload(QString strstarttime, QString strendtime, QString startshift);
 
+
+
+
 	QDateTime getSignPageTime(QDateTime signcurtime);
 	QDateTime getSignPageDate(QDateTime signdate);
 	QString getSignPageShift(QString signshift);
-
-
-
-	void firstwriteTables(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
-	void firstwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
-
-	void secondwriteTables(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
-	void secondwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
-	
-	
-public:
 	QDateTime getcurDateTimedata();
-	
 
+	
+	
+	void firstwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
+	void firstwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
+	void firstwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
+	
+	
+	void secondwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
+	void secondwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
+	void secondwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
+
+	
 	
 
 signals:
@@ -66,22 +75,15 @@ public slots:
 	void on_okButton_clicked();
 private slots:
 
-	    /*
-		void receivesignoutcurDateTimeData(QDateTime data);
-
-
-		void receivesignoutnameData(QString data);
-
-		void receivesignoutTime_QDateEditData(QDateTime data);
-
-		void receivesignout_shiftData(QString data);
-
-		//void writeTables(QString strstarttime, QString strendtime, QString startshift);
-        */
+	    
 private:
 	QDateTime informationcurDateTime;
 
+	QDateTime signpagetime;
 
+	QDateTime signpagedate;
+
+	QString signpageshift;
 
 
 

@@ -12,5 +12,7 @@
 		<file>images/signin.png</file>
 		<file>images/confirm.png</file>
 		<file>images/information.png</file>
+		<file>images/print.png</file>
+		<file>images/configuration.png</file>
     </qresource>
 </RCC>

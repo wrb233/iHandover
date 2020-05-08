@@ -16,7 +16,7 @@ InitConTable::~InitConTable()
 {
 	
 }
-//函数声明,6张表
+
 bool initAccidentInfoTable();
 bool initMaintenancePlanTable();
 bool initDPCPointTable();
@@ -27,13 +27,13 @@ bool initWorkHoursTable();
 bool InitConTable::initAllTables()
 {
 
-	initAccidentInfoTable();//初始化事故信息表
-	initMaintenancePlanTable();//初始化检修计划表
-	initDPCPointTable();//初始化遥控记录表
-	initLineLoadTable();//初始化线路重载表
+	initAccidentInfoTable();
+	initMaintenancePlanTable();
+	initDPCPointTable();
+	initLineLoadTable();
 
-	initSignInAndOutTable();//初始化交接班交接记录总表
-	initWorkHoursTable();//初始化各地班工作时段配置表
+	initSignInAndOutTable();
+	initWorkHoursTable();
 	return true;
 }
 
@@ -42,70 +42,71 @@ bool InitConTable::initAllTables()
 
 bool InitConTable::initAccidentInfoTable()
 {
-	if (!searchANDCreateTable("H_FA_ACCIDENTINFO"))//事故信息表的表名
+	if (!searchANDCreateTable("H_FA_ACCIDENTINFO"))
 	{
 		qDebug()<<"searchANDCreateTable() H_FA_ACCIDENTINFO ERROR";
 		return false;
 	}
 	//QString H_FA_ACCIDENTINFO = "delete from H_FA_ACCIDENTINFO";
-	//executeSQL(H_FA_ACCIDENTINFO,0);//清空表
+	//executeSQL(H_FA_ACCIDENTINFO,0);
 	return true;
 }
 bool InitConTable::initMaintenancePlanTable()
 {
-	if (!searchANDCreateTable("H_MAINTENANCE_PLAN"))//检修计划表的表名
+	if (!searchANDCreateTable("H_MAINTENANCE_PLAN"))
 	{
 		qDebug()<<"searchANDCreateTable() H_MAINTENANCE_PLAN ERROR";
 		return false;
 	}
 	//QString H_MAINTENANCE_PLAN_tableview = "delete from H_MAINTENANCE_PLAN";
-	//executeSQL(H_MAINTENANCE_PLAN_tableview,0);//清空表	
+	//executeSQL(H_MAINTENANCE_PLAN_tableview,0);
 	return true;
 }
 bool InitConTable::initDPCPointTable()
 {
-	if (!searchANDCreateTable("H_DPC_OPTRECORD"))//遥控记录表的表名
+	if (!searchANDCreateTable("H_DPC_OPTRECORD"))
 	{
 		qDebug()<<"searchANDCreateTable() H_DPC_OPTRECORD ERROR";
 		return false;
 	}
 	//QString H_DPC_OPTRECORD_tableview = "delete from H_DPC_OPTRECORD";
-	//executeSQL(H_DPC_OPTRECORD_tableview,0);//清空表	
+	//executeSQL(H_DPC_OPTRECORD_tableview,0);
 	return true;
 }
 bool InitConTable::initLineLoadTable()
 {
-	if (!searchANDCreateTable("H_FEEDER_OVERLOAD"))//线路重载表的表名
+	if (!searchANDCreateTable("H_FEEDER_OVERLOAD"))
 	{
 		qDebug()<<"searchANDCreateTable() H_FEEDER_OVERLOAD ERROR";
 		return false;
 	}
 	//QString H_FEEDER_OVERLOAD_tableview = "delete from H_FEEDER_OVERLOAD";
-	//executeSQL(H_FEEDER_OVERLOAD_tableview,0);//清空表	
+	//executeSQL(H_FEEDER_OVERLOAD_tableview,0);
 	return true;
 }
 bool InitConTable::initSignInAndOutTable()
 {
-	if (!searchANDCreateTable("H_SIGNINANDOUT"))//线路重载表的表名
+	if (!searchANDCreateTable("H_SIGNINANDOUT"))
 	{
 		qDebug()<<"searchANDCreateTable() H_SIGNINANDOUT ERROR";
 		return false;
 	}
 	//QString H_SIGNINANDOUT_tableview = "delete from H_SIGNINANDOUT";
-	//executeSQL(H_SIGNINANDOUT_tableview,0);//清空表	
+	//executeSQL(H_SIGNINANDOUT_tableview,0);
 	return true;
 }
 bool InitConTable::initWorkHoursTable()
 {
-	if (!searchANDCreateTable("H_WORK_HOURS"))//线路重载表的表名
+	if (!searchANDCreateTable("H_WORK_HOURS"))
 	{
 		qDebug()<<"searchANDCreateTable() H_WORK_HOURS ERROR";
 		return false;
 	}
 	//QString H_WORK_HOURS_tableview = "delete from H_WORK_HOURS";
-	//executeSQL(H_WORK_HOURS_tableview,0);//清空表	
+	//executeSQL(H_WORK_HOURS_tableview,0);
 	return true;
 }
+
 
 
 ObId InitConTable::findOTypeByObId(ObId obId, OType toFindOType, OType stopOType)
@@ -143,6 +144,9 @@ ObId InitConTable::findOTypeByObId(ObId obId, OType toFindOType, OType stopOType
 	}
 	return 0;
 }
+
+
+
 void InitConTable::initType()
 {
 	OT_PMSBreaker = database->matchOType("PMSBreaker");//69
@@ -180,4 +184,91 @@ bool InitConTable::executeSQL(QString sql, ObId temp)
 	}
 	return false;
 }
+
+
+
+ObId InitConTable::getDPSPointLink(ObId dmsObjId)
+{
+	AType at_dpspointlink;
+	try
+	{
+		at_dpspointlink= database->matchAType("DPSPointLink");
+	}
+	catch(Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(dmsObjId)+": DATABASE Extract OT ERROR");
+		return 0;
+	}
+	LinkData dpspointLink;
+	try
+	{
+		database->read(dmsObjId,at_dpspointlink,&dpspointLink);
+	}
+	catch(Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(dmsObjId)+": DATABASE Extract OT ERROR");
+		return 0;
+	}
+	return (ObId)dpspointLink;
+}
+
+
+ObId InitConTable::getPSRLink(ObId dmsObjId)
+{
+	AType at_psrlink;
+	try
+	{
+		at_psrlink= database->matchAType("PSRLink");
+	}
+	catch(Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(dmsObjId)+": DATABASE Extract OT ERROR");
+		return 0;
+	}
+	LinkData psrLink;
+	try
+	{
+		database->read(dmsObjId,at_psrlink,&psrLink);
+	}
+	catch(Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(dmsObjId)+": DATABASE Extract OT ERROR");
+		return 0;
+	}
+	return (ObId)psrLink;
+}
+
+
+ObId InitConTable::getMemberOfLineLink(ObId dmsObjId)    //get Subordinate object,return obid
+{
+	AType at_memberoflineLink;
+	try
+	{
+		at_memberoflineLink= database->matchAType("MemberOfLine");
+	}
+	catch(Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(dmsObjId)+": DATABASE Extract OT ERROR");
+		return 0;
+	}
+	LinkData memberoflineLnk;
+	try
+	{
+		database->read(dmsObjId,at_memberoflineLink,&memberoflineLnk);
+	}
+	catch(Exception& e)
+	{
+		ToolUtil::myDebug(QString::number(dmsObjId)+": DATABASE Extract OT ERROR");
+		return 0;
+	}
+	return (ObId)memberoflineLnk;
+}
+
+
+
+
+
+
+
+
 

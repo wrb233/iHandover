@@ -77,6 +77,8 @@ OType OT_SubControlArea;
 OType OT_TransformerWinding;
 
 
+OType OT_MeasurementType;
+
 ToolUtil::ToolUtil():QObject()
 {
 
@@ -92,7 +94,67 @@ bool ToolUtil::initOTypeAndAType()
 	try
 	{
 		
+		AT_ampRating = database->matchAType("ampRating");
+		AT_BreakerType = database->matchAType("BreakerType");
+		AT_ChangeNum = database->matchAType("ChangeNum");
+		AT_ChannelState = database->matchAType("ChannelState");
+		AT_ChildrenList = database->matchAType("ChildrenList");
+		AT_CommitSyncEnd = database->matchAType("CommitSyncEnd");
+		AT_ControlResult = database->matchAType("ControlResult");
+		AT_DeviceProperty = database->matchAType("DeviceProperty");
+		AT_DPCPointLink = database->matchAType("DPCPointLink");
+		AT_DPSPointLink = database->matchAType("DPSPointLink");
+		AT_Factory = database->matchAType("Factory");
+		AT_FaultState = database->matchAType("FaultState");
+		AT_FeederLink = database->matchAType("FeederLink");
+		//AT_FieldState = database->matchAType("FieldState");//新增											 
+		//AT_FieldValue = database->matchAType("FieldValue");//新增											 
+		AT_KeyName = database->matchAType("KeyName");
+		AT_Limit = database->matchAType("Limit");
+		AT_MeasLink = database->matchAType("MeasLink");
+		AT_MeasurementTypeLink = database->matchAType("MeasurementTypeLink");
+		AT_Model = database->matchAType("Model");
+		AT_MVPointLink = database->matchAType("MVPointLink");
 		AT_Name = database->matchAType("Name");
+		AT_OnlineStatus = database->matchAType("OnlineStatus");
+		AT_OnlineTime = database->matchAType("OnlineTime");
+		AT_ParamMva = database->matchAType("ParamMva");//额定视在功率AType
+		AT_ParentLink = database->matchAType("ParentLink");
+		AT_PSRLink = database->matchAType("PSRLink");
+		AT_RTEnergized = database->matchAType("RTEnergized");//是否带电
+		AT_State = database->matchAType("State");
+		AT_Value = database->matchAType("Value");
+
+		OT_Analog = database->matchOType("Analog");
+		OT_BSCPoint = database->matchOType("BSCPoint");
+		OT_DCSwitch = database->matchOType("DCSwitch");
+		OT_Disconnector = database->matchOType("Disconnector");
+		OT_Discrete = database->matchOType("Discrete");
+		OT_DistributionTransformer = database->matchOType("DistributionTransformer");
+		OT_DMSCommunicateUnit = database->matchOType("DMSCommunicateUnit");
+		OT_DPCPoint = database->matchOType("DPCPoint");
+		OT_DPSPoint = database->matchOType("DPSPoint");
+		OT_Feeder = database->matchOType("Feeder");
+		OT_IncrementCommit = database->matchOType("IncrementCommit");
+		OT_LoadBreakSwitch = database->matchOType("LoadBreakSwitch");
+		OT_Machine = database->matchOType("Machine");
+		OT_MVPoint = database->matchOType("MVPoint");
+		OT_PMSBreaker = database->matchOType("PMSBreaker");
+		OT_PMSBusbar = database->matchOType("PMSBusbar");
+		OT_PMSDoubleWindingTransformer = database->matchOType("PMSDoubleWindingTransformer");
+		OT_PMSRoot = database->matchOType("PMSRoot");
+		OT_PMSStation =  database->matchOType("PMSStation");
+		OT_PMSTerminal = database->matchOType("PMSTerminal");
+		OT_PMSThreeWindingTransformer = database->matchOType("PMSThreeWindingTransformer");
+		OT_SubControlArea = database->matchOType("SubControlArea");
+		OT_TransformerWinding = database->matchOType("TransformerWinding");
+
+
+
+		//OT_PMSVLTP = database->matchOType("PMSVLTP");
+		OT_Folder = database->matchOType("Folder");
+
+		OT_MeasurementType =database->matchOType("MeasurementType");
 		
 	}
 	catch (Exception& e)
@@ -102,7 +164,7 @@ bool ToolUtil::initOTypeAndAType()
 	return true;
 }
 
-QString ToolUtil::getHisRecordConf(QString key)
+QString ToolUtil::getiHandoverConf(QString key)
 {
 	if(NULL==configIniRead)
 	{
@@ -217,7 +279,7 @@ bool ToolUtil::UpdateConnectDB(DBPOOLHANDLE dbPoolHandle)
 
 void ToolUtil::myDebug(QString content)
 {
-	if ("on"==ToolUtil::getHisRecordConf("/Debug/config"))
+	if ("on"==ToolUtil::getiHandoverConf("/Debug/config"))
 	{
 		qDebug()<<content<< endl; ;
 	}

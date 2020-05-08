@@ -67,6 +67,8 @@ extern OType OT_PMSThreeWindingTransformer;
 extern OType OT_SubControlArea;
 extern OType OT_TransformerWinding;
 
+extern OType OT_MeasurementType;
+
 class ToolUtil:public QObject
 {
 	Q_OBJECT
@@ -75,7 +77,7 @@ public:
 	~ToolUtil();
 	
 	//获取配置文件ihandover.ini中的配置信息
-	static QString getHisRecordConf(QString key);
+	static QString getiHandoverConf(QString key);
 
 	//初始化OTYPE和ATYPE
 	static bool initOTypeAndAType();

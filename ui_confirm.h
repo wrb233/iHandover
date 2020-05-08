@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'confirm.ui'
 **
-** Created: Mon Apr 20 11:30:18 2020
+** Created: Thu May 7 09:29:40 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -31,7 +31,7 @@ QT_BEGIN_NAMESPACE
 class Ui_Confirm
 {
 public:
-    QWidget *widget;
+    QWidget *layoutWidget;
     QGridLayout *gridLayout;
     QLabel *signoutperson;
     QComboBox *signoutname;
@@ -49,8 +49,6 @@ public:
     QSpacerItem *spacer_2;
     QLabel *signinandoutNote;
     QTextEdit *signinandoutNote_QTextEdit;
-    QLabel *workplace;
-    QComboBox *workplacename;
     QSpacerItem *spacer;
     QSpacerItem *spacerItem;
     QPushButton *okButton;
@@ -64,18 +62,18 @@ public:
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/images/confirm.png"), QSize(), QIcon::Normal, QIcon::Off);
         Confirm->setWindowIcon(icon);
-        widget = new QWidget(Confirm);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(16, 3, 508, 384));
-        gridLayout = new QGridLayout(widget);
+        layoutWidget = new QWidget(Confirm);
+        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
+        layoutWidget->setGeometry(QRect(16, 3, 508, 384));
+        gridLayout = new QGridLayout(layoutWidget);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         gridLayout->setContentsMargins(0, 0, 0, 0);
-        signoutperson = new QLabel(widget);
+        signoutperson = new QLabel(layoutWidget);
         signoutperson->setObjectName(QString::fromUtf8("signoutperson"));
 
         gridLayout->addWidget(signoutperson, 0, 0, 1, 1);
 
-        signoutname = new QComboBox(widget);
+        signoutname = new QComboBox(layoutWidget);
         signoutname->setObjectName(QString::fromUtf8("signoutname"));
 
         gridLayout->addWidget(signoutname, 0, 1, 1, 2);
@@ -84,22 +82,22 @@ public:
 
         gridLayout->addItem(spacer_3, 0, 3, 1, 2);
 
-        signoutperson_2 = new QLabel(widget);
+        signoutperson_2 = new QLabel(layoutWidget);
         signoutperson_2->setObjectName(QString::fromUtf8("signoutperson_2"));
 
         gridLayout->addWidget(signoutperson_2, 0, 5, 1, 2);
 
-        lineEdit = new QLineEdit(widget);
+        lineEdit = new QLineEdit(layoutWidget);
         lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
 
         gridLayout->addWidget(lineEdit, 0, 7, 1, 2);
 
-        signinperson = new QLabel(widget);
+        signinperson = new QLabel(layoutWidget);
         signinperson->setObjectName(QString::fromUtf8("signinperson"));
 
         gridLayout->addWidget(signinperson, 1, 0, 1, 1);
 
-        signinname = new QComboBox(widget);
+        signinname = new QComboBox(layoutWidget);
         signinname->setObjectName(QString::fromUtf8("signinname"));
 
         gridLayout->addWidget(signinname, 1, 1, 1, 2);
@@ -108,27 +106,27 @@ public:
 
         gridLayout->addItem(spacer_4, 1, 3, 1, 2);
 
-        signinperson_2 = new QLabel(widget);
+        signinperson_2 = new QLabel(layoutWidget);
         signinperson_2->setObjectName(QString::fromUtf8("signinperson_2"));
 
         gridLayout->addWidget(signinperson_2, 1, 5, 1, 2);
 
-        lineEdit_2 = new QLineEdit(widget);
+        lineEdit_2 = new QLineEdit(layoutWidget);
         lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
 
         gridLayout->addWidget(lineEdit_2, 1, 7, 1, 2);
 
-        signinandoutTime = new QLabel(widget);
+        signinandoutTime = new QLabel(layoutWidget);
         signinandoutTime->setObjectName(QString::fromUtf8("signinandoutTime"));
 
         gridLayout->addWidget(signinandoutTime, 2, 0, 1, 2);
 
-        signinandoutTime_QDateEdit = new QDateEdit(widget);
+        signinandoutTime_QDateEdit = new QDateEdit(layoutWidget);
         signinandoutTime_QDateEdit->setObjectName(QString::fromUtf8("signinandoutTime_QDateEdit"));
 
         gridLayout->addWidget(signinandoutTime_QDateEdit, 2, 2, 1, 3);
 
-        signinandout_shift = new QComboBox(widget);
+        signinandout_shift = new QComboBox(layoutWidget);
         signinandout_shift->setObjectName(QString::fromUtf8("signinandout_shift"));
 
         gridLayout->addWidget(signinandout_shift, 2, 5, 1, 2);
@@ -137,25 +135,15 @@ public:
 
         gridLayout->addItem(spacer_2, 2, 7, 1, 2);
 
-        signinandoutNote = new QLabel(widget);
+        signinandoutNote = new QLabel(layoutWidget);
         signinandoutNote->setObjectName(QString::fromUtf8("signinandoutNote"));
 
         gridLayout->addWidget(signinandoutNote, 3, 0, 1, 2);
 
-        signinandoutNote_QTextEdit = new QTextEdit(widget);
+        signinandoutNote_QTextEdit = new QTextEdit(layoutWidget);
         signinandoutNote_QTextEdit->setObjectName(QString::fromUtf8("signinandoutNote_QTextEdit"));
 
         gridLayout->addWidget(signinandoutNote_QTextEdit, 3, 2, 1, 6);
-
-        workplace = new QLabel(widget);
-        workplace->setObjectName(QString::fromUtf8("workplace"));
-
-        gridLayout->addWidget(workplace, 4, 0, 1, 2);
-
-        workplacename = new QComboBox(widget);
-        workplacename->setObjectName(QString::fromUtf8("workplacename"));
-
-        gridLayout->addWidget(workplacename, 4, 2, 1, 2);
 
         spacer = new QSpacerItem(281, 31, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -165,12 +153,12 @@ public:
 
         gridLayout->addItem(spacerItem, 5, 0, 1, 6);
 
-        okButton = new QPushButton(widget);
+        okButton = new QPushButton(layoutWidget);
         okButton->setObjectName(QString::fromUtf8("okButton"));
 
         gridLayout->addWidget(okButton, 5, 6, 1, 2);
 
-        cancelButton = new QPushButton(widget);
+        cancelButton = new QPushButton(layoutWidget);
         cancelButton->setObjectName(QString::fromUtf8("cancelButton"));
 
         gridLayout->addWidget(cancelButton, 5, 8, 1, 1);
@@ -192,7 +180,6 @@ public:
         signinperson_2->setText(QApplication::translate("Confirm", "\346\216\245\347\217\255\344\272\272\345\257\206\347\240\201", 0, QApplication::UnicodeUTF8));
         signinandoutTime->setText(QApplication::translate("Confirm", "\344\272\244\346\216\245\347\217\255\346\227\266\351\227\264", 0, QApplication::UnicodeUTF8));
         signinandoutNote->setText(QApplication::translate("Confirm", "\344\272\244\346\216\245\345\244\207\346\263\250\345\206\205\345\256\271", 0, QApplication::UnicodeUTF8));
-        workplace->setText(QApplication::translate("Confirm", "\344\270\212\347\217\255\345\234\260\347\202\271", 0, QApplication::UnicodeUTF8));
         okButton->setText(QApplication::translate("Confirm", "\347\241\256\350\256\244", 0, QApplication::UnicodeUTF8));
         cancelButton->setText(QApplication::translate("Confirm", "\345\217\226\346\266\210", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

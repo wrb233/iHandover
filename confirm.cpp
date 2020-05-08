@@ -23,10 +23,9 @@ Confirm::Confirm(QWidget *parent) :
 	ui(new Ui::Confirm)
 {
 	ui->setupUi(this);
-	//³õÊ¼»¯ÓÃ»§ÔÚÈ·ÈÏ½»½Ó°à¶Ô»°Ò³ÃæÊäÈëµÄ½»°àÈË¡¢½Ó°àÈË¡¢½»½Ó°àÊ±¼ä¡¢½»½Ó±¸×¢ÄÚÈİ£¨Îª¿Õ£©¡¢ÉÏ°àµØµãĞÅÏ¢
-    
-	//1½»°àÈË
-	ui->signoutname->clear(); //Çå³ıÁĞ±í
+	//åˆå§‹åŒ–ç”¨æˆ·åœ¨ç¡®è®¤äº¤æ¥ç­å¯¹è¯é¡µé¢è¾“å…¥çš„äº¤ç­äººã€æ¥ç­äººã€äº¤æ¥ç­æ—¶é—´ã€äº¤æ¥å¤‡æ³¨å†…å®¹ï¼ˆä¸ºç©ºï¼‰ã€ä¸Šç­åœ°ç‚¹ä¿¡æ¯
+	//1äº¤ç­äºº
+	ui->signoutname->clear(); //æ¸…é™¤åˆ—è¡¨
 	
 	signoutlistUser = new std::list<UserObjectData>();
 	g_User->ds6k_getUserListCurrentMac(signoutlistUser);
@@ -46,8 +45,8 @@ Confirm::Confirm(QWidget *parent) :
 		signoutindex++;
 	}
 	
-	//2½Ó°àÈË
-	ui->signinname->clear(); //Çå³ıÁĞ±í
+	//2æ¥ç­äºº
+	ui->signinname->clear(); //æ¸…é™¤åˆ—è¡¨
 	signinlistUser = new std::list<UserObjectData>();
 	g_User->ds6k_getUserListCurrentMac(signinlistUser);
 	int signinindex=0;
@@ -62,14 +61,16 @@ Confirm::Confirm(QWidget *parent) :
 		signinindex++;
 	}
 
-	//3½»½Ó°àÊ±¼ä
+	//3äº¤æ¥ç­æ—¶é—´
 	QDateTime current_date_time =QDateTime::currentDateTime();
 	QString current_date =current_date_time.toString("yyyyMMdd");
 	QDate date = QDate::fromString(current_date,"yyyyMMdd");
 	ui->signinandoutTime_QDateEdit->setDate(date);
+	ui->signinandoutTime_QDateEdit->setDisplayFormat("yyyy/MM/dd");
 
-	//4½»½Ó°à´ÎÔ­Ê¼Êı¾İ,´Ó¸÷µØ°à¹¤×÷Ê±¶ÎÅäÖÃ±íÈ¥¶ÁÈ¡
-	ui->signinandout_shift->clear(); //Çå³ıÁĞ±í
+
+	//4äº¤æ¥ç­æ¬¡åŸå§‹æ•°æ®,ä»å„åœ°ç­å·¥ä½œæ—¶æ®µé…ç½®è¡¨å»è¯»å–
+	ui->signinandout_shift->clear(); //æ¸…é™¤åˆ—è¡¨
 	RECORDSETHANDLE WorkNameSetHandle = CPS_ORM_RsNewRecordSet();
 	QString sqlWorkName = "select WORK_NAME, WORK_INDEX from H_WORK_HOURS";
 	int rowsOfWorkName = CPS_ORM_RsLoadData(WorkNameSetHandle,sqlWorkName.toUtf8().data(),dbPoolHandle);
@@ -83,8 +84,10 @@ Confirm::Confirm(QWidget *parent) :
 	}
 	CPS_ORM_RsFreeRecordSet(WorkNameSetHandle);
 
-	//5ÉÏ°àµØµãĞÅÏ¢
-	ui->workplacename->clear(); //Çå³ıÁĞ±í
+	//5ä¸Šç­åœ°ç‚¹
+
+	/*
+	ui->workplacename->clear(); //æ¸…é™¤åˆ—è¡¨
 	RECORDSETHANDLE WorkPlaceNameSetHandle = CPS_ORM_RsNewRecordSet();
 	QString sqlWorkPlaceName = "select WORK_PLACE from H_WORK_HOURS";
 	int rowsOfWorkPlaceName = CPS_ORM_RsLoadData(WorkPlaceNameSetHandle,sqlWorkPlaceName.toUtf8().data(),dbPoolHandle);
@@ -94,6 +97,8 @@ Confirm::Confirm(QWidget *parent) :
 		ui->workplacename->addItem(QString::number(workplacename));
 	}
 	CPS_ORM_RsFreeRecordSet(WorkPlaceNameSetHandle);
+
+	*/
 }
  Confirm::~Confirm()
 
@@ -104,26 +109,17 @@ Confirm::Confirm(QWidget *parent) :
 }
 
 
- /*
- void Confirm::insertSignInAndOutTable()
- {
-	 //²âÊÔÍò½ğÓÍ
-	 //QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-	 //Information information;
-	 //information.exec();
- }
- */
 
- //ÓÃ»§µã»÷ok£¬¾ÍÔÚ½»½Ó°à½»½Ó¼ÇÂ¼×Ü±íÌí¼ÓÒ»Ìõ½»½Ó¼ÇÂ¼
+ //ç”¨æˆ·ç‚¹å‡»okï¼Œå°±åœ¨äº¤æ¥ç­äº¤æ¥è®°å½•æ€»è¡¨æ·»åŠ ä¸€æ¡äº¤æ¥è®°å½•
  void Confirm::on_okButton_clicked()
  {
 	 
-	 //Ç§Íò¿É²»¸ÒÔÙ¶¨Òå±äÁ¿Êı¾İÀàĞÍÁË£¬Ôì³É¾Õ²¿±äÁ¿
+	 //åƒä¸‡å¯ä¸æ•¢å†å®šä¹‰å˜é‡æ•°æ®ç±»å‹äº†ï¼Œé€ æˆèŠéƒ¨å˜é‡
 	 
-	 //1»ñÈ¡µ±Ç°ÈÕÆÚÊ±¼ä
+	 //1è·å–å½“å‰æ—¥æœŸæ—¶é—´
 	 curDateTime=QDateTime::currentDateTime();
 	 
-	 //2»ñÈ¡ÓÃ»§Ñ¡È¡µÄ½»°àÈË
+	 //2è·å–ç”¨æˆ·é€‰å–çš„äº¤ç­äºº
 	 int signoutnameindex = ui->signoutname->currentIndex();
 	 QVariant obidSignoutname = ui->signinname->itemData(signoutnameindex,Qt::UserRole);
 	 ObId obidsignoutname = obidSignoutname.toULongLong();
@@ -132,7 +128,7 @@ Confirm::Confirm(QWidget *parent) :
 	 
 
 
-	 //3»ñÈ¡ÓÃ»§Ñ¡È¡µÄ½Ó°àÈË
+	 //3è·å–ç”¨æˆ·é€‰å–çš„æ¥ç­äºº
 	 int signinnameindex = ui->signinname->currentIndex();
 	 QVariant obidSigninname = ui->signinname->itemData(signinnameindex,Qt::UserRole);
 	 ObId obidsigninname = obidSigninname.toULongLong();
@@ -140,36 +136,50 @@ Confirm::Confirm(QWidget *parent) :
 	 
 
 
-	 //4»ñÈ¡½»½Ó°àÊ±¼ä
+	 //4è·å–äº¤æ¥ç­æ—¶é—´
 	 signinandoutTime_QDateEdit = ui->signinandoutTime_QDateEdit->dateTime();
 	 
-	 //5»ñÈ¡½»½Ó°àĞòºÅ
-
-
+	 //5è·å–äº¤æ¥ç­åºå·
 	 int signinandout_shitfindex = ui->signinandout_shift->currentIndex();
 	 QVariant signinandout_shitfV = ui->signinandout_shift->itemData(signinandout_shitfindex,Qt::UserRole);
 	 int signinandout_shitf_id = signinandout_shitfV.toInt();
 	 signinandout_shitf = QString::number(signinandout_shitf_id);
 	 
-	 //6»ñÈ¡½»½Ó±¸×¢ÄÚÈİ
+	 //6è·å–äº¤æ¥å¤‡æ³¨å†…å®¹
 	 signinandoutNote_QTextEdit = ui->signinandoutNote_QTextEdit->toPlainText();
 
-	 //7»ñÈ¡ÓÃ»§Ñ¡È¡µÄÉÏ°àµØµã
-	 workplacename = ui->workplacename->currentText();
 
+
+
+
+	 //7è·å–ç”¨æˆ·é€‰å–çš„ä¸Šç­åœ°ç‚¹
+	 /*
+	 workplacename = ui->workplacename->currentText();
+	 */
+
+	 /*
 	 RECORDSETHANDLE SignInAndOutSetHandle = CPS_ORM_RsNewRecordSet();
-	 //Æ´½Ó½»½Ó°à½»½Ó¼ÇÂ¼×Ü±íµÄsqlÓï¾ä
+	 //æ‹¼æ¥äº¤æ¥ç­äº¤æ¥è®°å½•æ€»è¡¨çš„sqlè¯­å¥
 	 QString signinandoutsql = QString("INSERT INTO H_SIGNINANDOUT (TIME,HANDOVER,SUCCESSOR,WORK_DAY,WORK_INDEX,NOTE,WORK_PLACE) VALUES (to_timestamp('"+curDateTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss'),"\
 		 +QString("%1").arg(obidsignoutname)+","\
 		 +QString("%2").arg(obidsigninname)+",to_timestamp('"+signinandoutTime_QDateEdit.toString("yyyy-MM-dd")+"','yyyy-MM-dd'),"\
 		 +QString("%4").arg(signinandout_shitf_id)+",'"\
 		 +QString("%5").arg(signinandoutNote_QTextEdit)+"',"\
 		 +QString("%6").arg(workplacename)+")");
-	 //µ÷ÓÃÁíÒ»¸öcppÀïµÄstaticÉùÃ÷¹ıµÄº¯Êı£¬Ö´ĞĞsqlÓï¾ä£¬¾­³£ÓÃµ½
+	 //è°ƒç”¨å¦ä¸€ä¸ªcppé‡Œçš„staticå£°æ˜è¿‡çš„å‡½æ•°ï¼Œæ‰§è¡Œsqlè¯­å¥ï¼Œç»å¸¸ç”¨åˆ°
 	 InitConTable::executeSQL(signinandoutsql,0);
 	 CPS_ORM_RsFreeRecordSet(SignInAndOutSetHandle);
-	 //MainWindow::showSignInAndOut();
-	 
+	 */
+	 RECORDSETHANDLE SignInAndOutSetHandle = CPS_ORM_RsNewRecordSet();
+	 //æ‹¼æ¥äº¤æ¥ç­äº¤æ¥è®°å½•æ€»è¡¨çš„sqlè¯­å¥
+	 QString signinandoutsql = QString("INSERT INTO H_SIGNINANDOUT (TIME,HANDOVER,SUCCESSOR,WORK_DAY,WORK_INDEX,NOTE) VALUES (to_timestamp('"+curDateTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss'),"\
+		 +QString("%1").arg(obidsignoutname)+","\
+		 +QString("%2").arg(obidsigninname)+",to_timestamp('"+signinandoutTime_QDateEdit.toString("yyyy-MM-dd")+"','yyyy-MM-dd'),"\
+		 +QString("%4").arg(signinandout_shitf_id)+",'"\
+		 +QString("%5").arg(signinandoutNote_QTextEdit)+"')");
+	 //è°ƒç”¨å¦ä¸€ä¸ªcppé‡Œçš„staticå£°æ˜è¿‡çš„å‡½æ•°ï¼Œæ‰§è¡Œsqlè¯­å¥ï¼Œç»å¸¸ç”¨åˆ°
+	 InitConTable::executeSQL(signinandoutsql,0);
+	 CPS_ORM_RsFreeRecordSet(SignInAndOutSetHandle);
 	 
 
 	
@@ -179,7 +189,7 @@ Confirm::Confirm(QWidget *parent) :
  }
 
 
- //ÎªÃ¿Ò»¸öÊôĞÔĞ´Ò»±éget·½·¨
+ //ä¸ºæ¯ä¸€ä¸ªå±æ€§å†™ä¸€égetæ–¹æ³•
  QDateTime Confirm::getcurDateTimedata()
  {	 
 	 return curDateTime;
@@ -204,11 +214,14 @@ Confirm::Confirm(QWidget *parent) :
  {	 
 	 return signinandoutNote_QTextEdit;
  }
+
+
+ /*
  QString Confirm::getworkplacenamedata()
  {	 
 	 return workplacename;
  }
-
+ */
  
 
  
