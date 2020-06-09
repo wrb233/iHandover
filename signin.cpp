@@ -2,10 +2,13 @@
 #include "ui_signin.h"
 #include <QMessageBox>
 
+#include "configuration.h"
+#include "ui_configuration.h"
+
 
 #include "signout.h"
-#include "information.h"
-#include "ui_information.h"
+#include "signininformation.h"
+#include "ui_signininformation.h"
 
 #include "mainwindow.h"
 #include "initializtion.h"
@@ -56,9 +59,27 @@ SignIn::SignIn(QWidget *parent) :
 
 
 
-	 ui->signin_shift->clear();  //清除列表
+	 //根据H_WORK_HOURS全天班查找到起始时间
+
+	 RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
+	 QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX=0";//当前时间和排班时间存在时间差
+	 int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
+	 int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
+	 CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
+	 QDateTime current_date_time =QDateTime::currentDateTime();
+	 int current_date_timetimestamp = current_date_time.toTime_t()-60*60*work_start;//往前推若干小时
+	 QDateTime current_date_timeminus = QDateTime::fromTime_t(current_date_timetimestamp);
+	 QString current_date = current_date_timeminus.toString("yyyyMMdd");
+	 QDate date = QDate::fromString(current_date,"yyyyMMdd");
+	 ui->signinTime_QDateEdit->setDate(date);
+	 ui->signinTime_QDateEdit->setDisplayFormat("yyyy/MM/dd");
+
+
+
+	 //4交接班次原始数据,从各地班工作时段配置表去读取
+	 ui->signin_shift->clear(); //清除列表
 	 RECORDSETHANDLE WorkNameSetHandle = CPS_ORM_RsNewRecordSet();
-	 QString sqlWorkName = "select WORK_NAME, WORK_INDEX from H_WORK_HOURS";
+	 QString sqlWorkName = "select WORK_NAME, WORK_INDEX from H_WORK_HOURS order by work_index";
 	 int rowsOfWorkName = CPS_ORM_RsLoadData(WorkNameSetHandle,sqlWorkName.toUtf8().data(),dbPoolHandle);
 	 for (int i=0;i<rowsOfWorkName;i++)
 	 {
@@ -67,15 +88,15 @@ SignIn::SignIn(QWidget *parent) :
 		 qDebug()<<QString::fromUtf8(workname.c_str());
 		 ui->signin_shift->addItem(QString::fromUtf8(workname.c_str()));
 		 ui->signin_shift->setItemData(i,workindex,Qt::UserRole);
+
+
 	 }
 	 CPS_ORM_RsFreeRecordSet(WorkNameSetHandle);
+	 //默认交班班次
+	 Configuration configuration;
+	 int intDefaultIndex = configuration.whichShift();
+	 ui->signin_shift->setCurrentIndex(intDefaultIndex);
 
-
-	 QDateTime current_date_time =QDateTime::currentDateTime();
-	 QString current_date =current_date_time.toString("yyyyMMdd");
-	 QDate date = QDate::fromString(current_date,"yyyyMMdd");
-	 ui->signinTime_QDateEdit->setDate(date);
-	 ui->signinTime_QDateEdit->setDisplayFormat("yyyy/MM/dd");
     
 }
  SignIn::~SignIn()

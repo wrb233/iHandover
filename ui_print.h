@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'print.ui'
 **
-** Created: Thu May 7 09:29:40 2020
+** Created: Wed Jun 10 03:57:26 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -19,7 +19,6 @@
 #include <QtGui/QDialog>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
 #include <QtGui/QPushButton>
 #include <QtGui/QSpacerItem>
 #include <QtGui/QVBoxLayout>
@@ -30,12 +29,7 @@ class Ui_Print
 {
 public:
     QVBoxLayout *verticalLayout;
-    QHBoxLayout *horizontalLayout;
-    QLabel *from;
-    QDateEdit *fromTime_QDateEdit;
-    QComboBox *fromcomboBox;
     QHBoxLayout *horizontalLayout_2;
-    QLabel *to;
     QDateEdit *toTime_QDateEdit;
     QComboBox *tocomboBox;
     QHBoxLayout *horizontalLayout_3;
@@ -53,35 +47,8 @@ public:
         Print->setWindowIcon(icon);
         verticalLayout = new QVBoxLayout(Print);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        from = new QLabel(Print);
-        from->setObjectName(QString::fromUtf8("from"));
-        from->setMaximumSize(QSize(50, 16777215));
-
-        horizontalLayout->addWidget(from);
-
-        fromTime_QDateEdit = new QDateEdit(Print);
-        fromTime_QDateEdit->setObjectName(QString::fromUtf8("fromTime_QDateEdit"));
-
-        horizontalLayout->addWidget(fromTime_QDateEdit);
-
-        fromcomboBox = new QComboBox(Print);
-        fromcomboBox->setObjectName(QString::fromUtf8("fromcomboBox"));
-
-        horizontalLayout->addWidget(fromcomboBox);
-
-
-        verticalLayout->addLayout(horizontalLayout);
-
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        to = new QLabel(Print);
-        to->setObjectName(QString::fromUtf8("to"));
-        to->setMaximumSize(QSize(50, 16777215));
-
-        horizontalLayout_2->addWidget(to);
-
         toTime_QDateEdit = new QDateEdit(Print);
         toTime_QDateEdit->setObjectName(QString::fromUtf8("toTime_QDateEdit"));
 
@@ -125,8 +92,6 @@ public:
     void retranslateUi(QDialog *Print)
     {
         Print->setWindowTitle(QApplication::translate("Print", "\346\211\223\345\215\260", 0, QApplication::UnicodeUTF8));
-        from->setText(QApplication::translate("Print", "\344\273\216", 0, QApplication::UnicodeUTF8));
-        to->setText(QApplication::translate("Print", "\345\210\260", 0, QApplication::UnicodeUTF8));
         okButton->setText(QApplication::translate("Print", "\347\241\256\345\256\232", 0, QApplication::UnicodeUTF8));
         cancelButton->setText(QApplication::translate("Print", "\345\217\226\346\266\210", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

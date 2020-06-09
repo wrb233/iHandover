@@ -2,10 +2,12 @@
 #include "ui_signout.h"
 #include <QMessageBox>
 
+#include "configuration.h"
+#include "ui_configuration.h"
 
 #include "signin.h"
-#include "information.h"
-#include "ui_information.h"
+#include "signoutinformation.h"
+#include "ui_signoutinformation.h"
 
 #include "mainwindow.h"
 #include "initializtion.h"
@@ -25,17 +27,6 @@ SignOut::SignOut(QWidget *parent) :
     
 
 	 ui->setupUi(this);
-
-    //setWindowTitle("signout");
-
-
-
-
-	
-	//connect(ui->okButton,SIGNAL(clicked()),this, SLOT(showInformationDialog()));
-
-
-
 
 	ui->signoutname->clear(); //清除列表
 
@@ -60,11 +51,49 @@ SignOut::SignOut(QWidget *parent) :
 	
 
 	
-	
+	//根据H_WORK_HOURS全天班查找到起始时间
 
+	RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
+	QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX=0";//当前时间和排班时间存在时间差
+	int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
+	int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
+	CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
+	QDateTime current_date_time =QDateTime::currentDateTime();
+	int current_date_timetimestamp = current_date_time.toTime_t()-60*60*work_start;//往前推若干小时
+	QDateTime current_date_timeminus = QDateTime::fromTime_t(current_date_timetimestamp);
+	QString current_date = current_date_timeminus.toString("yyyyMMdd");
+	QDate date = QDate::fromString(current_date,"yyyyMMdd");
+	ui->signoutTime_QDateEdit->setDate(date);
+	ui->signoutTime_QDateEdit->setDisplayFormat("yyyy/MM/dd");
+
+
+
+	//4交接班次原始数据,从各地班工作时段配置表去读取
 	ui->signout_shift->clear(); //清除列表
 	RECORDSETHANDLE WorkNameSetHandle = CPS_ORM_RsNewRecordSet();
-	QString sqlWorkName = "select WORK_NAME, WORK_INDEX from H_WORK_HOURS";
+	QString sqlWorkName = "select WORK_NAME, WORK_INDEX from H_WORK_HOURS order by work_index";
+	int rowsOfWorkName = CPS_ORM_RsLoadData(WorkNameSetHandle,sqlWorkName.toUtf8().data(),dbPoolHandle);
+	for (int i=0;i<rowsOfWorkName;i++)
+	{
+		std::string workname = CPS_ORM_RsGetStringValue(WorkNameSetHandle,i,0);
+		int workindex = CPS_ORM_RsGetNumberValue(WorkNameSetHandle,i,1);
+		qDebug()<<QString::fromUtf8(workname.c_str());
+		ui->signout_shift->addItem(QString::fromUtf8(workname.c_str()));
+		ui->signout_shift->setItemData(i,workindex,Qt::UserRole);
+
+
+	}
+	CPS_ORM_RsFreeRecordSet(WorkNameSetHandle);
+	//默认交班班次
+	Configuration configuration;
+	int intDefaultIndex = configuration.whichShift();
+	ui->signout_shift->setCurrentIndex(intDefaultIndex);
+
+
+	/*
+	ui->signout_shift->clear(); //清除列表
+	RECORDSETHANDLE WorkNameSetHandle = CPS_ORM_RsNewRecordSet();
+	QString sqlWorkName = "select WORK_NAME, WORK_INDEX from H_WORK_HOURS order by work_index";
 	int rowsOfWorkName = CPS_ORM_RsLoadData(WorkNameSetHandle,sqlWorkName.toUtf8().data(),dbPoolHandle);
 	for (int i=0;i<rowsOfWorkName;i++)
 	{
@@ -79,12 +108,31 @@ SignOut::SignOut(QWidget *parent) :
 
 
 	
+	QDateTime current_date_time =QDateTime::currentDateTime();
+	//根据H_WORK_HOURS全天班查找到起始时间
+	QString strstarttime;//初始化左时间
+	RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
+	QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX=1";
+	int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
+	int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
+	
+	CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
 
-    QDateTime current_date_time =QDateTime::currentDateTime();
-	QString current_date =current_date_time.toString("yyyyMMdd");
+
+	
+
+	int current_date_timetimestamp = current_date_time.toTime_t()-60*60*work_start;//往前推9小时
+	QDateTime current_date_timeminus = QDateTime::fromTime_t(current_date_timetimestamp);
+	QString current_date = current_date_timeminus.toString("yyyyMMdd");
 	QDate date = QDate::fromString(current_date,"yyyyMMdd");
+	ui->signoutTime_QDateEdit->setReadOnly(true);
 	ui->signoutTime_QDateEdit->setDate(date);
 	ui->signoutTime_QDateEdit->setDisplayFormat("yyyy/MM/dd");
+
+	*/
+
+    
+	
 
     
 }
@@ -96,20 +144,6 @@ SignOut::SignOut(QWidget *parent) :
 
 }
 
-
- /*
- void SignOut::showInformationDialog()
-{
-    
-	
-	//测试万金油
-	//QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-
-	//qDebug()<<1;
-
-	
-}
-*/
 
 
  void SignOut::on_okButton_clicked()
@@ -158,25 +192,6 @@ SignOut::SignOut(QWidget *parent) :
 		 QVariant signout_shitfV = ui->signout_shift->itemData(signout_shitfindex,Qt::UserRole);
 		 int signout_shitf_id = signout_shitfV.toInt();
 		 signout_shitf = QString::number(signout_shitf_id);
-
-		 
-
-
-		 /*
-		 emit sendsignoutcurDateTimeData(signoutcurDateTime);
-
-		 emit sendsignoutnameData(signoutname);
-
-		 emit sendsignoutTime_QDateEditData(signoutTime_QDateEdit);
-
-		 emit sendsignout_shiftData(signout_shitf);
-		 */
-
-
-
-
-
-
 
 
  }

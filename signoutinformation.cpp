@@ -1,5 +1,5 @@
-#include "information.h"
-#include "ui_information.h"
+#include "signoutinformation.h"
+#include "ui_signoutinformation.h"
 #include <QMessageBox>
 
 
@@ -10,7 +10,7 @@
 #include <QMessageBox>
 #include "signout.h"
 #include "signin.h"
-#include "information.h"
+#include "signoutinformation.h"
 #include "confirm.h"
 #include "mainwindow.h"
 #include "initializtion.h"
@@ -27,423 +27,36 @@ extern InitConTable *initConTable;
 
 extern QList<QString> MVPointlist;
 
-Information::Information(QWidget *parent) :
+SignOutInformation::SignOutInformation(QWidget *parent) :
     QDialog(parent),
 	
-	ui(new Ui::Information)
+	ui(new Ui::SignOutInformation)
 {
     
 
 	 ui->setupUi(this);
+	 
+	 
+	 
+	 //新增一行，对检修计划单独处理
+	 connect(ui->Add,SIGNAL(clicked()),this,SLOT(on_btn_Add_clicked()));
+	 //删除一行，对检修计划单独处理
+	 connect(ui->Del,SIGNAL(clicked()),this,SLOT(on_btn_Del_clicked()));
 
 
 	 
     
 }
- Information::~Information()
+ SignOutInformation::~SignOutInformation()
 
 {
 
     delete ui;
 
 }
-
- void Information::showsigninFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift)
- {
-	 QStandardItemModel *FAInfo_model = new QStandardItemModel();
-	 FAInfo_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("accident_info")));
-	 FAInfo_model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("work_day")));
-	 FAInfo_model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("work_index")));
-	 FAInfo_model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("start_time")));
-	 //FAInfo_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("end_time")));
-	 FAInfo_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("reason")));
-	 //FAInfo_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("acker")));
-	 FAInfo_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("note")));
-	 ui->accidentinfo_tableview->setModel(FAInfo_model);
-	 ui->accidentinfo_tableview->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-
-	 //从新表里面去查啦，哈哈哈
-	RECORDSETHANDLE secondgatherFAInfoSetHandle = CPS_ORM_RsNewRecordSet();
-	QString secondsqlFAInfo = "select ACCIDENT_INFO, WORK_DAY, WORK_INDEX, TIME, START_TIME, REASON, NOTE from H_FA_ACCIDENTINFO where TIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') order by START_TIME";
-	int rowsOfTer = CPS_ORM_RsLoadData(secondgatherFAInfoSetHandle,secondsqlFAInfo.toUtf8().data(),dbPoolHandle);
-	for (int i=0;i<rowsOfTer;i++)
-	{
-		//1ACCIDENT_INFO事故信息
-		std::string accident_info = CPS_ORM_RsGetStringValue(secondgatherFAInfoSetHandle,i,0);
-		QStandardItem* item1 = new QStandardItem(QString::fromUtf8(accident_info.c_str()));
-		item1->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		item1->setForeground(QBrush(QColor(0, 255, 0))); 
-
-		//2WORK_DAY交接日	  
-		ORMTimeStamp work_day = CPS_ORM_RsGetTimeValue(secondgatherFAInfoSetHandle,i,1);
-		QDateTime strwork_day = SetTimeFromDB(work_day);
-		QStandardItem* item2 = new QStandardItem(strwork_day.toString("yyyy-MM-dd"));
-		item2->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		item2->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-		//3WORK_INDEX交接班序号
-		int work_index = CPS_ORM_RsGetNumberValue(secondgatherFAInfoSetHandle,i,2);
-		QString strwork_index = QString::number(work_index);
-		RECORDSETHANDLE shiftSetHandle = CPS_ORM_RsNewRecordSet();
-		QString strsqlstartshift = "select WORK_NAME from H_WORK_HOURS where WORK_INDEX="+strwork_index;
-		int rowsOfTers = CPS_ORM_RsLoadData(shiftSetHandle,strsqlstartshift.toUtf8().data(),dbPoolHandle);
-		std::string strstartshift = CPS_ORM_RsGetStringValue(shiftSetHandle,0,0);
-		QStandardItem* item3 = new QStandardItem(QString::fromUtf8(strstartshift.c_str()));
-		item3->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		item3->setForeground(QBrush(QColor(0, 255, 0))); 
-		CPS_ORM_RsFreeRecordSet(shiftSetHandle);
-
-		//4录入时间
-
-
-		//5START_TIME发生时间
-		ORMTimeStamp start_time = CPS_ORM_RsGetTimeValue(secondgatherFAInfoSetHandle, i, 4);
-		QDateTime strstarttime = SetTimeFromDB(start_time);
-		QStandardItem* item5 = new QStandardItem(strstarttime.toString("yyyy-MM-dd hh:mm:ss"));
-		item5->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		item5->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-		/*
-		//6END_TIME结束时间,系统默认时间
-		ORMTimeStamp end_time = CPS_ORM_RsGetTimeValue(secondgatherFAInfoSetHandle, i, 5);
-		QDateTime strendtime = SetTimeFromDB(end_time);
-		QStandardItem* item6 = new QStandardItem(strendtime.toString("yyyy-MM-dd hh:mm:ss"));
-		item6->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		item6->setForeground(QBrush(QColor(0, 255, 0))); 
-		*/
-
-
-		//7REASON事故原因
-		std::string reason = CPS_ORM_RsGetStringValue(secondgatherFAInfoSetHandle,i,5);
-		QStandardItem* item7 = new QStandardItem(QString::fromUtf8(reason.c_str()));
-		item7->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		item7->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-		/*
-		//8ACKER确认人
-		std::string acker = CPS_ORM_RsGetStringValue(secondgatherFAInfoSetHandle,i,7);
-		QStandardItem* item8 = new QStandardItem(QString::fromUtf8(acker.c_str()));
-		item8->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		item8->setForeground(QBrush(QColor(0, 255, 0))); 
-		*/
-
-
-		//9NOTE备注
-		std::string note = CPS_ORM_RsGetStringValue(secondgatherFAInfoSetHandle,i,6);
-		QStandardItem* item9 = new QStandardItem(QString::fromUtf8(note.c_str()));
-		item9->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		item9->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-
-
-
-		QList<QStandardItem*> item;
-		//item << item1 << item2 <<item3 <<item5 <<item6 << item7 <<item8 <<item9;
-		item << item1 << item2 <<item3 <<item5 << item7 <<item9;
-		FAInfo_model->appendRow(item);
-
-
-	}
-	
-	CPS_ORM_RsFreeRecordSet(secondgatherFAInfoSetHandle);
- }
- void Information::showsigninMaintenancePlan(QString strstarttime, QString strendtime, QString startshift)
- {
-	 QStandardItemModel *MAINTPlan_model = new QStandardItemModel();
-	 MAINTPlan_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("station")));
-	 MAINTPlan_model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("feeder")));
-	 MAINTPlan_model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("work_day")));
-	 MAINTPlan_model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("work_index")));
-	 MAINTPlan_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("poweroffstart_time")));
-	 MAINTPlan_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("poweroffend_time")));
-	 MAINTPlan_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("powerofftype")));
-	 MAINTPlan_model->setHorizontalHeaderItem(7, new QStandardItem(QObject::tr("poweroffreason")));
-	 MAINTPlan_model->setHorizontalHeaderItem(8, new QStandardItem(QObject::tr("powerofftime")));
-	 MAINTPlan_model->setHorizontalHeaderItem(9, new QStandardItem(QObject::tr("note")));
-	 ui->maintenanceplan_tableview->setModel(MAINTPlan_model);
-	 ui->maintenanceplan_tableview->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
- }
- void Information::showsigninDPCOptRecord(QString strstarttime, QString strendtime, QString startshift)
- {
-	 QStandardItemModel *DPCPoint_model = new QStandardItemModel();
-	 DPCPoint_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("area")));
-	 DPCPoint_model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("station")));
-	 DPCPoint_model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("feeder")));
-	 DPCPoint_model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("switch")));
-	 DPCPoint_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("work_day")));
-	 DPCPoint_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("work_index")));
-	 DPCPoint_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("opt_content")));
-	 DPCPoint_model->setHorizontalHeaderItem(7, new QStandardItem(QObject::tr("opt_time")));
-	 DPCPoint_model->setHorizontalHeaderItem(8, new QStandardItem(QObject::tr("operatorinfo")));
-	 DPCPoint_model->setHorizontalHeaderItem(9, new QStandardItem(QObject::tr("guarderinfo")));
-	 DPCPoint_model->setHorizontalHeaderItem(10, new QStandardItem(QObject::tr("note")));
-
-	 //利用setModel()方法将数据模型与QTableView绑定
-	 ui->DPCPoint_tableview->setModel(DPCPoint_model);
-	 //QTableView平均分配列宽
-	 ui->DPCPoint_tableview->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-	 //默认显示行头，如果你觉得不美观的话，我们可以将隐藏        
-	 //ui->DPCPonit_tableview->verticalHeader()->hide(); 
-
-	 //从新表里面去查啦，哈哈哈
-	 RECORDSETHANDLE secondgatherDPCPointSetHandle = CPS_ORM_RsNewRecordSet();
-	 QString secondsqlDPCPoint = "select area,station,feeder,switch,work_day,work_index,opt_content,opt_time,operatorinfo,guarderinfo,note from H_DPC_OPTRECORD where TIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') order by OPT_TIME";
-	 int rowsOfTer = CPS_ORM_RsLoadData(secondgatherDPCPointSetHandle,secondsqlDPCPoint.toUtf8().data(),dbPoolHandle);
-	 for (int i=0;i<rowsOfTer;i++)
-	 {
-		 //区域ObId转name
-		 ObId subcontrolareaidfromold = CPS_ORM_RsGetNumberValue(secondgatherDPCPointSetHandle,i,0);
-		 StringData subcontrolareadatafromold;
-		 ToolUtil::databaseRead(subcontrolareaidfromold, AT_Name, &subcontrolareadatafromold);
-		 OMString strsubcontrolareafromold = (OMString)subcontrolareadatafromold;
-		 QStandardItem* item1 = new QStandardItem(QString::fromUtf8(strsubcontrolareafromold.c_str()));
-		 item1->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item1->setForeground(QBrush(QColor(0, 255, 0))); 
-		 //变电站ObId转name
-		 ObId pmsstationidfromold = CPS_ORM_RsGetNumberValue(secondgatherDPCPointSetHandle,i,1);
-		 StringData pmsstationdatafromold;
-		 ToolUtil::databaseRead(pmsstationidfromold, AT_Name, &pmsstationdatafromold);
-		 OMString strpmsstationdatafromold = (OMString)pmsstationdatafromold;
-		 QStandardItem* item2 = new QStandardItem(QString::fromUtf8(strpmsstationdatafromold.c_str()));
-		 item2->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item2->setForeground(QBrush(QColor(0, 255, 0))); 
-		 //线路ObId转name
-		 ObId feederidfromold = CPS_ORM_RsGetNumberValue(secondgatherDPCPointSetHandle,i,2);
-		 StringData feederdatafromold;
-		 ToolUtil::databaseRead(feederidfromold, AT_Name, &feederdatafromold);
-		 OMString strfeederdatafromold = (OMString)feederdatafromold;
-		 QStandardItem* item3 = new QStandardItem(QString::fromUtf8(strfeederdatafromold.c_str()));
-		 item3->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item3->setForeground(QBrush(QColor(0, 255, 0))); 
-		 //开关名称ObId转name
-		 ObId switchidfromold = CPS_ORM_RsGetNumberValue(secondgatherDPCPointSetHandle,i,3);
-		 //qDebug()<<switchid;
-		 StringData switchdatafromold;
-		 ToolUtil::databaseRead(switchidfromold, AT_Name, &switchdatafromold);
-		 OMString strswitchdatafromold = (OMString)switchdatafromold;
-		 QStandardItem* item4 = new QStandardItem(QString::fromUtf8(strswitchdatafromold.c_str()));
-		 item4->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item4->setForeground(QBrush(QColor(0, 255, 0))); 
-
-		 //WORK_DAY交接日	  
-		 ORMTimeStamp work_day = CPS_ORM_RsGetTimeValue(secondgatherDPCPointSetHandle,i,4);
-		 QDateTime strwork_day = SetTimeFromDB(work_day);
-		 QStandardItem* item5 = new QStandardItem(strwork_day.toString("yyyy-MM-dd"));
-		 item5->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item5->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-		 //WORK_INDEX交接班序号
-		 int work_index = CPS_ORM_RsGetNumberValue(secondgatherDPCPointSetHandle,i,5);
-		 QString strwork_index = QString::number(work_index);
-		 RECORDSETHANDLE shiftSetHandle = CPS_ORM_RsNewRecordSet();
-		 QString strsqlstartshift = "select WORK_NAME from H_WORK_HOURS where WORK_INDEX="+strwork_index;
-		 int rowsOfTers = CPS_ORM_RsLoadData(shiftSetHandle,strsqlstartshift.toUtf8().data(),dbPoolHandle);
-		 std::string strstartshift = CPS_ORM_RsGetStringValue(shiftSetHandle,0,0);
-		 QStandardItem* item6 = new QStandardItem(QString::fromUtf8(strstartshift.c_str()));
-		 item6->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item6->setForeground(QBrush(QColor(0, 255, 0))); 
-		 CPS_ORM_RsFreeRecordSet(shiftSetHandle);
-
-		 //录入时间
-
-
-		 //opt_content操作内容
-		 std::string opt_content_info = CPS_ORM_RsGetStringValue(secondgatherDPCPointSetHandle,i,6);
-		 QStandardItem* item7 = new QStandardItem(QString::fromUtf8(opt_content_info.c_str()));
-		 item7->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item7->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-		 //opt_time操作时间
-		 ORMTimeStamp operationtime = CPS_ORM_RsGetTimeValue(secondgatherDPCPointSetHandle,i,7);
-		 QDateTime stroperationtime = SetTimeFromDB(operationtime);
-		 QStandardItem* item8 = new QStandardItem(stroperationtime.toString("yyyy-MM-dd hh:mm:ss"));
-		 item8->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item8->setForeground(QBrush(QColor(0, 255, 0))); 
-
-		 //操作人
-		 std::string stdopertor = CPS_ORM_RsGetStringValue(secondgatherDPCPointSetHandle,i,8);
-		 QStandardItem* item9 = new QStandardItem(QString::fromUtf8(stdopertor.c_str()));
-		 item9->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item9->setForeground(QBrush(QColor(0, 255, 0))); 
-
-		 //监护人
-		 std::string stdguarder = CPS_ORM_RsGetStringValue(secondgatherDPCPointSetHandle,i,9);
-		 QStandardItem* item10 = new QStandardItem(QString::fromUtf8(stdguarder.c_str()));
-		 item10->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item10->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-
-		 //NOTE备注
-		 std::string stdnote = CPS_ORM_RsGetStringValue(secondgatherDPCPointSetHandle,i,10);
-		 QStandardItem* item11 = new QStandardItem(QString::fromUtf8(stdnote.c_str()));
-		 item11->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item11->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-
-		 QList<QStandardItem*> item;
-		 //item << item1 << item2 <<item3 <<item5 <<item6 << item7 <<item8 <<item9;
-		 item << item1  << item2 <<item3<<item4 <<item5 <<item6  <<item7   <<item8 <<item9<<item10 <<item11;
-		 DPCPoint_model->appendRow(item);
-
-
-	 }
-
-
-	 
-	 CPS_ORM_RsFreeRecordSet(secondgatherDPCPointSetHandle);
-
-
-
-
- }
- void Information::showsigninFeederOverload(QString strstarttime, QString strendtime, QString startshift)
- {
-	 QStandardItemModel *FeederOverload_model = new QStandardItemModel();
-	 FeederOverload_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("area")));
-	 FeederOverload_model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("station")));
-	 FeederOverload_model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("feeder")));
-	 FeederOverload_model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("work_day")));
-	 FeederOverload_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("work_index")));
-	 FeederOverload_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("amprating")));
-	 FeederOverload_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("max_current")));
-	 FeederOverload_model->setHorizontalHeaderItem(7, new QStandardItem(QObject::tr("occur_time")));
-	 FeederOverload_model->setHorizontalHeaderItem(8, new QStandardItem(QObject::tr("overloadrate")));
-	 FeederOverload_model->setHorizontalHeaderItem(9, new QStandardItem(QObject::tr("note")));
-
-	 //利用setModel()方法将数据模型与QTableView绑定
-	 ui->lineload_tableview->setModel(FeederOverload_model);
-	 //QTableView平均分配列宽
-	 ui->lineload_tableview->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-
-
-	 //从新表里面去查啦，哈哈哈
-	 RECORDSETHANDLE secondgatherFeederOverloadSetHandle = CPS_ORM_RsNewRecordSet();
-	 QString secondsqlFeederOverload = "select area,station,feeder,work_day,work_index,amprating,max_current,occur_time,overloadrate,note from H_FEEDER_OVERLOAD where TIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') order by OCCUR_TIME";
-	 int rowsOfTer = CPS_ORM_RsLoadData(secondgatherFeederOverloadSetHandle,secondsqlFeederOverload.toUtf8().data(),dbPoolHandle);
-	 for (int i=0;i<rowsOfTer;i++)
-	 {
-		 //区域ObId转name
-		 ObId subcontrolareaidfromold = CPS_ORM_RsGetNumberValue(secondgatherFeederOverloadSetHandle,i,0);
-		 StringData subcontrolareadatafromold;
-		 ToolUtil::databaseRead(subcontrolareaidfromold, AT_Name, &subcontrolareadatafromold);
-		 OMString strsubcontrolareafromold = (OMString)subcontrolareadatafromold;
-		 QStandardItem* item1 = new QStandardItem(QString::fromUtf8(strsubcontrolareafromold.c_str()));
-		 item1->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item1->setForeground(QBrush(QColor(0, 255, 0))); 
-		 //变电站ObId转name
-		 ObId pmsstationidfromold = CPS_ORM_RsGetNumberValue(secondgatherFeederOverloadSetHandle,i,1);
-		 StringData pmsstationdatafromold;
-		 ToolUtil::databaseRead(pmsstationidfromold, AT_Name, &pmsstationdatafromold);
-		 OMString strpmsstationdatafromold = (OMString)pmsstationdatafromold;
-		 QStandardItem* item2 = new QStandardItem(QString::fromUtf8(strpmsstationdatafromold.c_str()));
-		 item2->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item2->setForeground(QBrush(QColor(0, 255, 0))); 
-		 //线路ObId转name
-		 ObId feederidfromold = CPS_ORM_RsGetNumberValue(secondgatherFeederOverloadSetHandle,i,2);
-		 StringData feederdatafromold;
-		 ToolUtil::databaseRead(feederidfromold, AT_Name, &feederdatafromold);
-		 OMString strfeederdatafromold = (OMString)feederdatafromold;
-		 QStandardItem* item3 = new QStandardItem(QString::fromUtf8(strfeederdatafromold.c_str()));
-		 item3->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item3->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-		 //WORK_DAY交接日	  
-		 ORMTimeStamp work_day = CPS_ORM_RsGetTimeValue(secondgatherFeederOverloadSetHandle,i,3);
-		 QDateTime strwork_day = SetTimeFromDB(work_day);
-		 QStandardItem* item4 = new QStandardItem(strwork_day.toString("yyyy-MM-dd"));
-		 item4->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item4->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-		 //WORK_INDEX交接班序号
-		 int work_index = CPS_ORM_RsGetNumberValue(secondgatherFeederOverloadSetHandle,i,4);
-		 QString strwork_index = QString::number(work_index);
-		 RECORDSETHANDLE shiftSetHandle = CPS_ORM_RsNewRecordSet();
-		 QString strsqlstartshift = "select WORK_NAME from H_WORK_HOURS where WORK_INDEX="+strwork_index;
-		 int rowsOfTers = CPS_ORM_RsLoadData(shiftSetHandle,strsqlstartshift.toUtf8().data(),dbPoolHandle);
-		 std::string strstartshift = CPS_ORM_RsGetStringValue(shiftSetHandle,0,0);
-		 QStandardItem* item5 = new QStandardItem(QString::fromUtf8(strstartshift.c_str()));
-		 item5->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item5->setForeground(QBrush(QColor(0, 255, 0))); 
-		 CPS_ORM_RsFreeRecordSet(shiftSetHandle);
-
-		 //录入时间
-
-		 //额定电流
-
-		 double amprating = CPS_ORM_RsGetNumberValue(secondgatherFeederOverloadSetHandle,i,5);
-		 QString stramprating = QString::number(amprating);
-		 QStandardItem* item6 = new QStandardItem(stramprating);
-		 item6->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item6->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-
-		 //最大电流
-
-
-		 double maxcurrent = CPS_ORM_RsGetNumberValue(secondgatherFeederOverloadSetHandle,i,6);
-		 QString strmaxcurrent = QString::number(maxcurrent);
-		 QStandardItem* item7 = new QStandardItem(strmaxcurrent);
-		 item7->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item7->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-
-		 //出现时间
-		 ORMTimeStamp occur_time = CPS_ORM_RsGetTimeValue(secondgatherFeederOverloadSetHandle,i,7);
-		 QDateTime stroccurtime = SetTimeFromDB(occur_time);
-		 QStandardItem* item8 = new QStandardItem(stroccurtime.toString("yyyy-MM-dd hh:mm:ss"));
-		 item8->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item8->setForeground(QBrush(QColor(0, 255, 0))); 
-		 //重载率
-		 double overloadrate = CPS_ORM_RsGetNumberValue(secondgatherFeederOverloadSetHandle,i,8);
-		 QString stroverloadrate = QString::number(overloadrate);
-
-		 QStandardItem* item9 = new QStandardItem(stroverloadrate);
-		 item9->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item9->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-		 //NOTE备注
-		 std::string stdnote = CPS_ORM_RsGetStringValue(secondgatherFeederOverloadSetHandle,i,9);
-		 QStandardItem* item10 = new QStandardItem(QString::fromUtf8(stdnote.c_str()));
-		 item10->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-		 item10->setForeground(QBrush(QColor(0, 255, 0))); 
-
-
-
-
-
-
-
-		 QList<QStandardItem*> item;
-		 //item << item1 << item2 <<item3 <<item5 <<item6 << item7 <<item8 <<item9;
-		 item << item1  << item2 <<item3<<item4 <<item5 <<item6   <<item7<<item8 <<item9<<item10;
-		 FeederOverload_model->appendRow(item);
-
-
-	 }
-
-
-
-
-	 CPS_ORM_RsFreeRecordSet(secondgatherFeederOverloadSetHandle);
-
-
-
-
- }
- void Information::firstshowFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift)
+ 
+ 
+void SignOutInformation::firstshowFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift)
 {
 	QStandardItemModel *FAInfo_model = new QStandardItemModel();
 	FAInfo_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("accident_info")));
@@ -455,12 +68,14 @@ Information::Information(QWidget *parent) :
 	//FAInfo_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("acker")));
 	FAInfo_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("note")));
 	ui->accidentinfo_tableview->setModel(FAInfo_model);
-	ui->accidentinfo_tableview->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	ui->accidentinfo_tableview->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+	ui->accidentinfo_tableview->horizontalHeader()->setResizeMode(4,QHeaderView::Stretch);//事故原因
+	ui->accidentinfo_tableview->horizontalHeader()->setResizeMode(5,QHeaderView::Stretch);//备注
 
 	RECORDSETHANDLE firstgatherFAInfoSetHandle = CPS_ORM_RsNewRecordSet();
 	QString firstsqlFAInfo = "select FEEDEROBJECTID, OBJECTID, FAULTTIME, TYPE from FA_SIGNAL where MESSAGETIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') order by MESSAGETIME";
 	int rowsOfTer = CPS_ORM_RsLoadData(firstgatherFAInfoSetHandle,firstsqlFAInfo.toUtf8().data(),dbPoolHandle);
-	AT_Name = database->matchAType("Name");
+	
 	for (int i=0;i<rowsOfTer;i++)
 	{
 		//FEEDEROBJECTID事故信息
@@ -502,9 +117,9 @@ Information::Information(QWidget *parent) :
 		OMString str3 = (OMString)data3;
 		QString qstr3 = QString::fromUtf8(str3.c_str());
 		if(fatype == 0)
-			qstr3.append(tr("overcurrent"));
+			qstr3.append(QObject::tr("overcurrent"));
 		else
-			qstr3.append(tr("deflection"));
+			qstr3.append(QObject::tr("deflection"));
 		QStandardItem* item6 = new QStandardItem(qstr3);
 
 		//确认人
@@ -529,26 +144,21 @@ Information::Information(QWidget *parent) :
 		
 }
 
-void Information::firstshowMaintenancePlan(QString strstarttime, QString strendtime, QString startshift)
+void SignOutInformation::firstshowMaintenancePlan(QString strstarttime, QString strendtime, QString startshift)
 {
-	QStandardItemModel *MAINTPlan_model = new QStandardItemModel();
-	MAINTPlan_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("station")));
-    MAINTPlan_model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("feeder")));
-	MAINTPlan_model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("work_day")));
-	MAINTPlan_model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("work_index")));
-    MAINTPlan_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("poweroffstart_time")));
-    MAINTPlan_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("poweroffend_time")));
-    MAINTPlan_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("powerofftype")));
-	MAINTPlan_model->setHorizontalHeaderItem(7, new QStandardItem(QObject::tr("poweroffreason")));
-	MAINTPlan_model->setHorizontalHeaderItem(8, new QStandardItem(QObject::tr("powerofftime")));
-	MAINTPlan_model->setHorizontalHeaderItem(9, new QStandardItem(QObject::tr("note")));
-	ui->maintenanceplan_tableview->setModel(MAINTPlan_model);
-	ui->maintenanceplan_tableview->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	
+	
+	ui->maintenanceplan_tableWidget->setColumnCount(10);//10列
+	ui->maintenanceplan_tableWidget->setHorizontalHeaderLabels(QStringList()<<QObject::tr("station")<<QObject::tr("feeder")<<QObject::tr("work_day")<<QObject::tr("work_index")<<QObject::tr("poweroffstart_time")<<QObject::tr("poweroffend_time")<<QObject::tr("powerofftype")<<QObject::tr("poweroffreason")<<QObject::tr("powerofftime")<<QObject::tr("note"));
+	ui->maintenanceplan_tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+
+
+
 
 	
 }
 
-void Information::firstshowDPCOptRecord(QString strstarttime, QString strendtime, QString startshift)
+void SignOutInformation::firstshowDPCOptRecord(QString strstarttime, QString strendtime, QString startshift)
 {
 	QStandardItemModel *DPCPoint_model = new QStandardItemModel();
 	DPCPoint_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("area")));
@@ -572,9 +182,11 @@ void Information::firstshowDPCOptRecord(QString strstarttime, QString strendtime
 
 
 	RECORDSETHANDLE firstgatherDPCPointSetHandle = CPS_ORM_RsNewRecordSet();
-	QString firstsqlDPCPoint = "select OBID, DPCACTION, ACTIONTIME, ACTIONRESULT, OPERATORINFO, GUARDERINFO from H_DPCPOINT_RECORD_2020 where ACTIONTIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') order by ACTIONTIME";
+	QDateTime curDateTime = QDateTime::currentDateTime();
+	QString year = curDateTime.toString("yyyy");
+	QString firstsqlDPCPoint = "select OBID, DPCACTION, ACTIONTIME, ACTIONRESULT, OPERATORINFO, GUARDERINFO from H_DPCPOINT_RECORD_"+year+" where ACTIONTIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') order by ACTIONTIME";
 	int rowsOfTer = CPS_ORM_RsLoadData(firstgatherDPCPointSetHandle,firstsqlDPCPoint.toUtf8().data(),dbPoolHandle);
-	AT_Name = database->matchAType("Name");
+	
 	for (int i=0;i<rowsOfTer;i++)
 	{
 		//找到遥控
@@ -795,7 +407,7 @@ void Information::firstshowDPCOptRecord(QString strstarttime, QString strendtime
 
 }
 
-void Information::firstshowFeederOverload(QString strstarttime, QString strendtime, QString startshift)
+void SignOutInformation::firstshowFeederOverload(QString strstarttime, QString strendtime, QString startshift)
 {
 
 	QStandardItemModel *FeederOverload_model = new QStandardItemModel();
@@ -825,6 +437,9 @@ void Information::firstshowFeederOverload(QString strstarttime, QString strendti
 
 	QString firstsqlFeederOverload;
 
+	QDateTime curDateTime = QDateTime::currentDateTime();
+	QString yearmonth = curDateTime.toString("yyyyMM");
+
 	if (MVPointlist.size()<1000)
 	{
 
@@ -836,7 +451,7 @@ void Information::firstshowFeederOverload(QString strstarttime, QString strendti
 		//qDebug()<<strMVPointlist;
 		strMVPointlist.chop(1);
 		qDebug()<<strMVPointlist;
-		firstsqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_202005 where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and SOBJECTID in ("+strMVPointlist+") order by SDATE";
+		firstsqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_"+yearmonth+" where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and SOBJECTID in ("+strMVPointlist+") order by SDATE";
 
 
 
@@ -860,7 +475,7 @@ void Information::firstshowFeederOverload(QString strstarttime, QString strendti
 
 		qDebug()<<strMVPointlist1;
 		qDebug()<<strMVPointlist2;
-		firstsqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_201909 where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and (SOBJECTID in ("+strMVPointlist1+") or SOBJECTID in ("+strMVPointlist2+"))";
+		firstsqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_"+yearmonth+" where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and (SOBJECTID in ("+strMVPointlist1+") or SOBJECTID in ("+strMVPointlist2+"))";
 
 
 	}
@@ -938,6 +553,8 @@ void Information::firstshowFeederOverload(QString strstarttime, QString strendti
 		ToolUtil::databaseRead(switchid, AT_ampRating, &switchampratingdata);
 		QStandardItem* item6 = new QStandardItem(QString::number(switchampratingdata));
 
+		
+
 		//最大电流
 		int maxcurrent = (int)CPS_ORM_RsGetNumberValue(firstgatherFeederOverloadSetHandle,i,2);//FAULTTIME
 		QStandardItem* item7 = new QStandardItem(QString::number(maxcurrent));
@@ -968,8 +585,14 @@ void Information::firstshowFeederOverload(QString strstarttime, QString strendti
 		item << item1 << item2 <<item3 <<item4 <<item5 <<item6<<item7<<item8<<item9<<item10;
 
 		//item << item1 << item2 <<item3 <<item4 <<item5 <<item6 <<item7 <<item8<<item9<<item10<<item11;
-
-		FeederOverload_model->appendRow(item);
+		double double_switchampratingdata  = switchampratingdata;
+		double double_maxcurrent = maxcurrent;
+		
+		if(double_switchampratingdata>=double_maxcurrent*0.75)
+		{
+			FeederOverload_model->appendRow(item);
+		}
+		
 
 
 	}
@@ -1015,25 +638,25 @@ void Information::receivesignout_shiftData(QString data)
 
 
 
-QDateTime Information::getSignPageTime(QDateTime signcurtime)
+QDateTime SignOutInformation::getSignPageTime(QDateTime signcurtime)
 {
 	signpagetime = signcurtime;
 	return signpagetime;
 }
 
-QDateTime Information::getSignPageDate(QDateTime signdate)
+QDateTime SignOutInformation::getSignPageDate(QDateTime signdate)
 {
 	signpagedate = signdate;
 	return signpagedate;
 }
 
-QString Information::getSignPageShift(QString signshift)
+QString SignOutInformation::getSignPageShift(QString signshift)
 {
 	 signpageshift = signshift;
 	 return signpageshift;
 }
 
-QDateTime Information::getcurDateTimedata()
+QDateTime SignOutInformation::getcurDateTimedata()
 {	 
 	return informationcurDateTime;
 }
@@ -1042,7 +665,7 @@ QDateTime Information::getcurDateTimedata()
 
 
 
-void Information::on_okButton_clicked()
+void SignOutInformation::on_okButton_clicked()
 {
 	
 	//录入时间
@@ -1061,7 +684,7 @@ void Information::on_okButton_clicked()
 
 
 
-void Information::firstwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
+void SignOutInformation::firstwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
 {
 
 	RECORDSETHANDLE queryFAInfoSetHandle = CPS_ORM_RsNewRecordSet();
@@ -1162,7 +785,7 @@ void Information::firstwriteFAaccidentTable(QString strstarttime, QString strend
 
 }
 
-void Information::secondwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
+void SignOutInformation::secondwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
 {
 
 	//这里只能插入新的数据了，不能暴力清空表，重头插，我怎么知道新的数据从哪里开始的？？？
@@ -1291,15 +914,31 @@ void Information::secondwriteFAaccidentTable(QString strstarttime, QString stren
 
 
 
+void SignOutInformation::firstwriteMaintenancePlanTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
+{
+
+	
+
+}
+
+void SignOutInformation::secondwriteMaintenancePlanTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
+{
 
 
-void Information::firstwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
+
+}
+
+
+
+
+void SignOutInformation::firstwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
 {
 
 	RECORDSETHANDLE queryDPCOptRecordSetHandle = CPS_ORM_RsNewRecordSet();
 	
-
-	QString querysqlDPCOptRecord = "select OBID, DPCACTION, ACTIONTIME, ACTIONRESULT, OPERATORINFO, GUARDERINFO from H_DPCPOINT_RECORD_2020 where ACTIONTIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
+	QDateTime curDateTime = QDateTime::currentDateTime();
+	QString year = curDateTime.toString("yyyy");
+	QString querysqlDPCOptRecord = "select OBID, DPCACTION, ACTIONTIME, ACTIONRESULT, OPERATORINFO, GUARDERINFO from H_DPCPOINT_RECORD_"+year+" where ACTIONTIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 	
 	
 
@@ -1406,7 +1045,7 @@ void Information::firstwriteDPCOptRecordTable(QString strstarttime, QString stre
 }
 
 
-void Information::secondwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
+void SignOutInformation::secondwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
 {
 
 	//这里只能插入新的数据了，不能暴力清空表，重头插，我怎么知道新的数据从哪里开始的？？？
@@ -1441,7 +1080,12 @@ void Information::secondwriteDPCOptRecordTable(QString strstarttime, QString str
 	
 	
 	RECORDSETHANDLE queryDPCOptRecordSetHandle = CPS_ORM_RsNewRecordSet();
-	QString querysqlDPCPoint = "select OBID, DPCACTION, ACTIONTIME, ACTIONRESULT, OPERATORINFO, GUARDERINFO from H_DPCPOINT_RECORD_2020  where ACTIONTIME between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
+
+	QDateTime curDateTime = QDateTime::currentDateTime();
+	QString year = curDateTime.toString("yyyy");
+
+
+	QString querysqlDPCPoint = "select OBID, DPCACTION, ACTIONTIME, ACTIONRESULT, OPERATORINFO, GUARDERINFO from H_DPCPOINT_RECORD_"+year+" where ACTIONTIME between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 	int newrowsOfTer = CPS_ORM_RsLoadData(queryDPCOptRecordSetHandle,querysqlDPCPoint.toUtf8().data(),dbPoolHandle);
 
 
@@ -1558,7 +1202,7 @@ void Information::secondwriteDPCOptRecordTable(QString strstarttime, QString str
 
 
 
-void Information::firstwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
+void SignOutInformation::firstwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
 {
 
 	RECORDSETHANDLE queryFeederOverloadSetHandle = CPS_ORM_RsNewRecordSet();
@@ -1574,6 +1218,9 @@ void Information::firstwriteFeederOverloadTable(QString strstarttime, QString st
 
 	QString querysqlFeederOverload;
 
+	QDateTime curDateTime = QDateTime::currentDateTime();
+	QString yearmonth = curDateTime.toString("yyyyMM");
+
 	if (MVPointlist.size()<1000)
 	{
 
@@ -1585,7 +1232,7 @@ void Information::firstwriteFeederOverloadTable(QString strstarttime, QString st
 		//qDebug()<<strMVPointlist;
 		strMVPointlist.chop(1);
 		qDebug()<<strMVPointlist;
-		querysqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_202005 where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and SOBJECTID in ("+strMVPointlist+")";
+		querysqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_"+yearmonth+" where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and SOBJECTID in ("+strMVPointlist+")";
 
 
 
@@ -1609,7 +1256,7 @@ void Information::firstwriteFeederOverloadTable(QString strstarttime, QString st
 
 		qDebug()<<strMVPointlist1;
 		qDebug()<<strMVPointlist2;
-		querysqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_201909 where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and (SOBJECTID in ("+strMVPointlist1+") or SOBJECTID in ("+strMVPointlist2+"))";
+		querysqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_"+yearmonth+" where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and (SOBJECTID in ("+strMVPointlist1+") or SOBJECTID in ("+strMVPointlist2+"))";
 
 
 	}
@@ -1740,7 +1387,7 @@ void Information::firstwriteFeederOverloadTable(QString strstarttime, QString st
 }
 
 
-void Information::secondwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
+void SignOutInformation::secondwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime)
 {
 
 	//这里只能插入新的数据了，不能暴力清空表，重头插，我怎么知道新的数据从哪里开始的？？？
@@ -1790,6 +1437,11 @@ void Information::secondwriteFeederOverloadTable(QString strstarttime, QString s
 
 	QString querysqlFeederOverload;
 
+
+
+	QDateTime curDateTime = QDateTime::currentDateTime();
+	QString yearmonth = curDateTime.toString("yyyyMM");
+
 	if (MVPointlist.size()<1000)
 	{
 
@@ -1801,7 +1453,7 @@ void Information::secondwriteFeederOverloadTable(QString strstarttime, QString s
 		//qDebug()<<strMVPointlist;
 		strMVPointlist.chop(1);
 		qDebug()<<strMVPointlist;
-		querysqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_202005 where SDATE between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and SOBJECTID in ("+strMVPointlist+")";
+		querysqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_"+yearmonth+" where SDATE between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and SOBJECTID in ("+strMVPointlist+")";
 
 
 
@@ -1825,7 +1477,7 @@ void Information::secondwriteFeederOverloadTable(QString strstarttime, QString s
 
 		qDebug()<<strMVPointlist1;
 		qDebug()<<strMVPointlist2;
-		querysqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_201909 where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and (SOBJECTID in ("+strMVPointlist1+") or SOBJECTID in ("+strMVPointlist2+"))";
+		querysqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_"+yearmonth+" where SDATE between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and (SOBJECTID in ("+strMVPointlist1+") or SOBJECTID in ("+strMVPointlist2+"))";
 
 
 	}
@@ -1937,7 +1589,7 @@ void Information::secondwriteFeederOverloadTable(QString strstarttime, QString s
 
 
 
-void Information::secondshowFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift)
+void SignOutInformation::secondshowFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift)
 {
 	QStandardItemModel *FAInfo_model = new QStandardItemModel();
 	FAInfo_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("accident_info")));
@@ -1949,12 +1601,14 @@ void Information::secondshowFAaccidentInfo(QString strstarttime, QString strendt
 	//FAInfo_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("acker")));
 	FAInfo_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("note")));
 	ui->accidentinfo_tableview->setModel(FAInfo_model);
-	ui->accidentinfo_tableview->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	ui->accidentinfo_tableview->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+	ui->accidentinfo_tableview->horizontalHeader()->setResizeMode(4,QHeaderView::Stretch);//事故原因
+	ui->accidentinfo_tableview->horizontalHeader()->setResizeMode(5,QHeaderView::Stretch);//备注
 	
 
 	//从新表里面去查啦，哈哈哈
 	RECORDSETHANDLE secondgatherFAInfoSetHandle = CPS_ORM_RsNewRecordSet();
-	QString secondsqlFAInfo = "select ACCIDENT_INFO, WORK_DAY, WORK_INDEX, TIME, START_TIME, REASON, NOTE from H_FA_ACCIDENTINFO order by START_TIME";
+	QString secondsqlFAInfo = "select ACCIDENT_INFO, WORK_DAY, WORK_INDEX, TIME, START_TIME, REASON, NOTE from H_FA_ACCIDENTINFO where time between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') order by START_TIME";
 	int rowsOfTer = CPS_ORM_RsLoadData(secondgatherFAInfoSetHandle,secondsqlFAInfo.toUtf8().data(),dbPoolHandle);
 	for (int i=0;i<rowsOfTer;i++)
 	{
@@ -2125,7 +1779,7 @@ void Information::secondshowFAaccidentInfo(QString strstarttime, QString strendt
 
 
 
-void Information::secondshowDPCOptRecord(QString strstarttime, QString strendtime, QString startshift)
+void SignOutInformation::secondshowDPCOptRecord(QString strstarttime, QString strendtime, QString startshift)
 {
 	QStandardItemModel *DPCPoint_model = new QStandardItemModel();
 	DPCPoint_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("area")));
@@ -2268,8 +1922,11 @@ void Information::secondshowDPCOptRecord(QString strstarttime, QString strendtim
 
 	//再从老表里面去查，记得卡时间，左时间是上一次录入时间，右时间是这一次点击okbutton时间,追加数据
 
+	QDateTime curDateTime = QDateTime::currentDateTime();
+	QString year = curDateTime.toString("yyyy");
+
 	RECORDSETHANDLE firstgatherDPCPointSetHandle = CPS_ORM_RsNewRecordSet();
-	QString firstsqlDPCPoint = "select OBID, DPCACTION, ACTIONTIME, ACTIONRESULT, OPERATORINFO, GUARDERINFO from H_DPCPOINT_RECORD_2020 where ACTIONTIME between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
+	QString firstsqlDPCPoint = "select OBID, DPCACTION, ACTIONTIME, ACTIONRESULT, OPERATORINFO, GUARDERINFO from H_DPCPOINT_RECORD_"+year+" where ACTIONTIME between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 	int rowsOfTer2 = CPS_ORM_RsLoadData(firstgatherDPCPointSetHandle,firstsqlDPCPoint.toUtf8().data(),dbPoolHandle);
 	for (int i=0;i<rowsOfTer2;i++)
 	{
@@ -2493,7 +2150,7 @@ void Information::secondshowDPCOptRecord(QString strstarttime, QString strendtim
 
 
 
-void Information::secondshowFeederOverload(QString strstarttime, QString strendtime, QString startshift)
+void SignOutInformation::secondshowFeederOverload(QString strstarttime, QString strendtime, QString startshift)
 {
 
 
@@ -2652,6 +2309,9 @@ void Information::secondshowFeederOverload(QString strstarttime, QString strendt
 
 	QString firstsqlFeederOverload;
 
+	QDateTime curDateTime = QDateTime::currentDateTime();
+	QString yearmonth = curDateTime.toString("yyyyMM");
+
 	if (MVPointlist.size()<1000)
 	{
 
@@ -2663,7 +2323,7 @@ void Information::secondshowFeederOverload(QString strstarttime, QString strendt
 		//qDebug()<<strMVPointlist;
 		strMVPointlist.chop(1);
 		qDebug()<<strMVPointlist;
-		firstsqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_202005 where SDATE between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and SOBJECTID in ("+strMVPointlist+") order by SDATE";
+		firstsqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_"+yearmonth+" where SDATE between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and SOBJECTID in ("+strMVPointlist+") order by SDATE";
 
 
 
@@ -2687,7 +2347,7 @@ void Information::secondshowFeederOverload(QString strstarttime, QString strendt
 
 		qDebug()<<strMVPointlist1;
 		qDebug()<<strMVPointlist2;
-		firstsqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_201909 where SDATE between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and (SOBJECTID in ("+strMVPointlist1+") or SOBJECTID in ("+strMVPointlist2+"))";
+		firstsqlFeederOverload = "select SOBJECTID, SDATE, SMAXABSVAL, SMAXABSVALTIME from H_HOURMVPOINTSTAT_"+yearmonth+" where SDATE between to_timestamp('"+strlasttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss') and (SOBJECTID in ("+strMVPointlist1+") or SOBJECTID in ("+strMVPointlist2+"))";
 
 
 	}
@@ -2799,7 +2459,15 @@ void Information::secondshowFeederOverload(QString strstarttime, QString strendt
 
 		//item << item1 << item2 <<item3 <<item4 <<item5 <<item6 <<item7 <<item8<<item9<<item10<<item11;
 
-		FeederOverload_model->appendRow(item);
+		double double_switchampratingdata  = switchampratingdata;
+		double double_maxcurrent = maxcurrent;
+
+		if(double_switchampratingdata>=double_maxcurrent*0.75)
+		{
+			FeederOverload_model->appendRow(item);
+		}
+
+		
 
 
 	}
@@ -2821,23 +2489,79 @@ void Information::secondshowFeederOverload(QString strstarttime, QString strendt
 
 
 
-void Information::secondshowMaintenancePlan(QString strstarttime, QString strendtime, QString startshift)
+void SignOutInformation::secondshowMaintenancePlan(QString strstarttime, QString strendtime, QString startshift)
 {
-	QStandardItemModel *MAINTPlan_model = new QStandardItemModel();
-	MAINTPlan_model->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("station")));
-	MAINTPlan_model->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("feeder")));
-	MAINTPlan_model->setHorizontalHeaderItem(2, new QStandardItem(QObject::tr("work_day")));
-	MAINTPlan_model->setHorizontalHeaderItem(3, new QStandardItem(QObject::tr("work_index")));
-	MAINTPlan_model->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("poweroffstart_time")));
-	MAINTPlan_model->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("poweroffend_time")));
-	MAINTPlan_model->setHorizontalHeaderItem(6, new QStandardItem(QObject::tr("powerofftype")));
-	MAINTPlan_model->setHorizontalHeaderItem(7, new QStandardItem(QObject::tr("poweroffreason")));
-	MAINTPlan_model->setHorizontalHeaderItem(8, new QStandardItem(QObject::tr("powerofftime")));
-	MAINTPlan_model->setHorizontalHeaderItem(9, new QStandardItem(QObject::tr("note")));
-	ui->maintenanceplan_tableview->setModel(MAINTPlan_model);
-	ui->maintenanceplan_tableview->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	
 
 
+}
+
+
+
+
+void SignOutInformation::on_btn_Add_clicked()
+{
+	int cols=ui->maintenanceplan_tableWidget->columnCount();
+	int rows=ui->maintenanceplan_tableWidget->rowCount();
+	ui->maintenanceplan_tableWidget->insertRow(rows);
+	for(int i=0;i<cols;i++)
+	{
+		if(i==2)//交接日
+		{
+
+
+			
+
+			
+			ui->maintenanceplan_tableWidget->setItem(rows,i,new QTableWidgetItem("222"));
+		}
+		else if(i==3)//交接班名称
+		{
+
+			
+			ui->maintenanceplan_tableWidget->setItem(rows,i,new QTableWidgetItem("333"));
+		}
+		else if(i==4)//停电开始时间
+		{
+			
+			QDateTimeEdit *poweroffstart_time = new QDateTimeEdit();
+
+			ui->maintenanceplan_tableWidget->setCellWidget(rows,i,poweroffstart_time);
+
+		}
+		else if(i==5)//停电结束时间
+		{	
+			QDateTimeEdit *poweroffend_time = new QDateTimeEdit();
+			ui->maintenanceplan_tableWidget->setCellWidget(rows,i,poweroffend_time);
+		}
+		else if(i==8)//停电时长(小时)
+		{	
+			QLineEdit *editor = new QLineEdit();  
+			QRegExp regExp("^(([0-9]+/.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*/.[0-9]+)|([0-9]*[1-9][0-9]*))$");
+			editor->setValidator(new QRegExpValidator(regExp)); 
+			ui->maintenanceplan_tableWidget->setCellWidget(rows,i,editor);
+		}
+
+
+
+		else
+		{
+			ui->maintenanceplan_tableWidget->setItem(rows,i,new QTableWidgetItem(""));
+		}
+
+	
+		
+
+
+	}
+	ui->maintenanceplan_tableWidget->selectRow(rows);
+}
+void SignOutInformation::on_btn_Del_clicked()
+{
+	QTableWidgetItem * item = ui->maintenanceplan_tableWidget->currentItem();
+	if(item==0)
+		return;
+	ui->maintenanceplan_tableWidget->removeRow(item->row());
 }
 
 

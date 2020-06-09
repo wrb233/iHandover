@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'signout.ui'
 **
-** Created: Thu May 7 09:29:40 2020
+** Created: Wed Jun 10 01:02:01 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Thu May 7 09:29:40 2020
+** Created: Wed Jun 10 01:02:01 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -19,7 +19,6 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QMainWindow>
-#include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
 #include <QtGui/QSpacerItem>
@@ -34,11 +33,11 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *actionConfiguration;
     QAction *actionSignOut;
     QAction *actionSignIn;
     QAction *actionConfirm;
     QAction *actionPrint;
-    QAction *actionConfiguration;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QSplitter *splitter;
@@ -49,7 +48,6 @@ public:
     QSpacerItem *horizontalSpacer;
     QTableView *SignInAndOut_tableview;
     QMenuBar *menuBar;
-    QMenu *menu;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -64,33 +62,33 @@ public:
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/images/handover.png"), QSize(), QIcon::Normal, QIcon::Off);
         MainWindow->setWindowIcon(icon);
+        actionConfiguration = new QAction(MainWindow);
+        actionConfiguration->setObjectName(QString::fromUtf8("actionConfiguration"));
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/images/configuration.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionConfiguration->setIcon(icon1);
         actionSignOut = new QAction(MainWindow);
         actionSignOut->setObjectName(QString::fromUtf8("actionSignOut"));
-        QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/images/signout.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionSignOut->setIcon(icon1);
+        QIcon icon2;
+        icon2.addFile(QString::fromUtf8(":/images/signout.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionSignOut->setIcon(icon2);
         QFont font1;
         actionSignOut->setFont(font1);
         actionSignIn = new QAction(MainWindow);
         actionSignIn->setObjectName(QString::fromUtf8("actionSignIn"));
-        QIcon icon2;
-        icon2.addFile(QString::fromUtf8(":/images/signin.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionSignIn->setIcon(icon2);
+        QIcon icon3;
+        icon3.addFile(QString::fromUtf8(":/images/signin.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionSignIn->setIcon(icon3);
         actionConfirm = new QAction(MainWindow);
         actionConfirm->setObjectName(QString::fromUtf8("actionConfirm"));
-        QIcon icon3;
-        icon3.addFile(QString::fromUtf8(":/images/confirm.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionConfirm->setIcon(icon3);
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8(":/images/confirm.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionConfirm->setIcon(icon4);
         actionPrint = new QAction(MainWindow);
         actionPrint->setObjectName(QString::fromUtf8("actionPrint"));
-        QIcon icon4;
-        icon4.addFile(QString::fromUtf8(":/images/print.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionPrint->setIcon(icon4);
-        actionConfiguration = new QAction(MainWindow);
-        actionConfiguration->setObjectName(QString::fromUtf8("actionConfiguration"));
         QIcon icon5;
-        icon5.addFile(QString::fromUtf8(":/images/configuration.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionConfiguration->setIcon(icon5);
+        icon5.addFile(QString::fromUtf8(":/images/print.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionPrint->setIcon(icon5);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -128,8 +126,6 @@ public:
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 1415, 26));
-        menu = new QMenu(menuBar);
-        menu->setObjectName(QString::fromUtf8("menu"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -141,8 +137,8 @@ public:
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
 
-        menuBar->addAction(menu->menuAction());
-        menu->addAction(actionConfiguration);
+        mainToolBar->addAction(actionConfiguration);
+        mainToolBar->addSeparator();
         mainToolBar->addAction(actionSignOut);
         mainToolBar->addSeparator();
         mainToolBar->addAction(actionSignIn);
@@ -160,6 +156,10 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\346\231\272\350\203\275\344\272\244\346\216\245\347\217\255", 0, QApplication::UnicodeUTF8));
+        actionConfiguration->setText(QApplication::translate("MainWindow", "\351\205\215\347\275\256", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        actionConfiguration->setToolTip(QApplication::translate("MainWindow", "\351\205\215\347\275\256", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         actionSignOut->setText(QApplication::translate("MainWindow", "\344\272\244\347\217\255", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         actionSignOut->setToolTip(QApplication::translate("MainWindow", "\344\272\244\347\217\255", 0, QApplication::UnicodeUTF8));
@@ -176,10 +176,8 @@ public:
 #ifndef QT_NO_TOOLTIP
         actionPrint->setToolTip(QApplication::translate("MainWindow", "\346\211\223\345\215\260", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        actionConfiguration->setText(QApplication::translate("MainWindow", "\351\205\215\347\275\256", 0, QApplication::UnicodeUTF8));
         period->setText(QApplication::translate("MainWindow", " \350\207\263", 0, QApplication::UnicodeUTF8));
         queryAtTime->setText(QApplication::translate("MainWindow", "\346\237\245\350\257\242", 0, QApplication::UnicodeUTF8));
-        menu->setTitle(QApplication::translate("MainWindow", "\347\217\255\345\267\245\344\275\234\351\205\215\347\275\256", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

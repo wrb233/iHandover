@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'configuration.ui'
 **
-** Created: Thu May 7 13:06:10 2020
+** Created: Wed Jun 10 01:02:01 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -57,16 +57,14 @@ public:
         gridLayout->addWidget(okButton, 1, 2, 1, 1);
 
         tableWidgetConfiguration = new QTableWidget(Configuration);
-        if (tableWidgetConfiguration->columnCount() < 4)
-            tableWidgetConfiguration->setColumnCount(4);
+        if (tableWidgetConfiguration->columnCount() < 3)
+            tableWidgetConfiguration->setColumnCount(3);
         QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
         tableWidgetConfiguration->setHorizontalHeaderItem(0, __qtablewidgetitem);
         QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
         tableWidgetConfiguration->setHorizontalHeaderItem(1, __qtablewidgetitem1);
         QTableWidgetItem *__qtablewidgetitem2 = new QTableWidgetItem();
         tableWidgetConfiguration->setHorizontalHeaderItem(2, __qtablewidgetitem2);
-        QTableWidgetItem *__qtablewidgetitem3 = new QTableWidgetItem();
-        tableWidgetConfiguration->setHorizontalHeaderItem(3, __qtablewidgetitem3);
         tableWidgetConfiguration->setObjectName(QString::fromUtf8("tableWidgetConfiguration"));
 
         gridLayout->addWidget(tableWidgetConfiguration, 0, 0, 1, 3);
@@ -82,7 +80,7 @@ public:
         Configuration->setWindowTitle(QApplication::translate("Configuration", "\351\205\215\347\275\256", 0, QApplication::UnicodeUTF8));
         Add->setText(QApplication::translate("Configuration", "\346\226\260\345\242\236", 0, QApplication::UnicodeUTF8));
         Del->setText(QApplication::translate("Configuration", "\345\210\240\351\231\244", 0, QApplication::UnicodeUTF8));
-        okButton->setText(QApplication::translate("Configuration", "\347\241\256\350\256\244\345\275\225\345\205\245", 0, QApplication::UnicodeUTF8));
+        okButton->setText(QApplication::translate("Configuration", "\347\241\256\350\256\244\351\205\215\347\275\256", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

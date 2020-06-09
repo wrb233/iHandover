@@ -82,6 +82,7 @@ private:
 
 	Ui::Confirm *ui;
 
+
 };
  
 #endif // CONFIRM_H

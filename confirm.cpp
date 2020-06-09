@@ -1,8 +1,11 @@
 #include "confirm.h"
 #include "ui_confirm.h"
+#include "configuration.h"
+#include "ui_configuration.h"
 #include "signin.h"
 #include "signout.h"
-#include "information.h"
+#include "signininformation.h"
+#include "signoutinformation.h"
 #include "mainwindow.h"
 #include "initializtion.h"
 #include "initConTable.h"
@@ -61,18 +64,42 @@ Confirm::Confirm(QWidget *parent) :
 		signinindex++;
 	}
 
+
+
+	//密码模式
+	ui->lineEdit->setEchoMode(QLineEdit::Password);
+	ui->lineEdit_2->setEchoMode(QLineEdit::Password);
 	//3交接班时间
+	/*
 	QDateTime current_date_time =QDateTime::currentDateTime();
 	QString current_date =current_date_time.toString("yyyyMMdd");
 	QDate date = QDate::fromString(current_date,"yyyyMMdd");
 	ui->signinandoutTime_QDateEdit->setDate(date);
 	ui->signinandoutTime_QDateEdit->setDisplayFormat("yyyy/MM/dd");
+	*/
+
+
+	//根据H_WORK_HOURS全天班查找到起始时间
+	
+	RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
+	QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX=0";//当前时间和排班时间存在时间差
+	int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
+	int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
+	CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
+	QDateTime current_date_time =QDateTime::currentDateTime();
+	int current_date_timetimestamp = current_date_time.toTime_t()-60*60*work_start;//往前推若干小时
+	QDateTime current_date_timeminus = QDateTime::fromTime_t(current_date_timetimestamp);
+	QString current_date = current_date_timeminus.toString("yyyyMMdd");
+	QDate date = QDate::fromString(current_date,"yyyyMMdd");
+	ui->signinandoutTime_QDateEdit->setDate(date);
+	ui->signinandoutTime_QDateEdit->setDisplayFormat("yyyy/MM/dd");
+
 
 
 	//4交接班次原始数据,从各地班工作时段配置表去读取
 	ui->signinandout_shift->clear(); //清除列表
 	RECORDSETHANDLE WorkNameSetHandle = CPS_ORM_RsNewRecordSet();
-	QString sqlWorkName = "select WORK_NAME, WORK_INDEX from H_WORK_HOURS";
+	QString sqlWorkName = "select WORK_NAME, WORK_INDEX from H_WORK_HOURS order by work_index";
 	int rowsOfWorkName = CPS_ORM_RsLoadData(WorkNameSetHandle,sqlWorkName.toUtf8().data(),dbPoolHandle);
 	for (int i=0;i<rowsOfWorkName;i++)
 	{
@@ -81,8 +108,14 @@ Confirm::Confirm(QWidget *parent) :
 		qDebug()<<QString::fromUtf8(workname.c_str());
 		ui->signinandout_shift->addItem(QString::fromUtf8(workname.c_str()));
 		ui->signinandout_shift->setItemData(i,workindex,Qt::UserRole);
+
+		
 	}
 	CPS_ORM_RsFreeRecordSet(WorkNameSetHandle);
+	//默认交接班次
+	Configuration configuration;
+	int intDefaultIndex = configuration.whichShift();
+	ui->signinandout_shift->setCurrentIndex(intDefaultIndex);
 
 	//5上班地点
 
@@ -133,6 +166,16 @@ Confirm::Confirm(QWidget *parent) :
 	 QVariant obidSigninname = ui->signinname->itemData(signinnameindex,Qt::UserRole);
 	 ObId obidsigninname = obidSigninname.toULongLong();
 	 signinname = QString::number(obidsigninname);
+
+
+	 //判断交班人密码正确与否
+	 std::string signoutname_password = ui->lineEdit->text().toStdString();
+	 bool effectiveFlagofSignOutName = g_User->checkUserPassword(obidsignoutname, signoutname_password);
+
+
+	 //判断接班人密码正确与否
+	 std::string signinname_password = ui->lineEdit_2->text().toStdString();
+	 bool effectiveFlagofSignInName = g_User->checkUserPassword(obidsigninname, signinname_password);
 	 
 
 
@@ -150,7 +193,14 @@ Confirm::Confirm(QWidget *parent) :
 
 
 
-
+	 if(!effectiveFlagofSignOutName ){
+		 QMessageBox::information(NULL, QObject::tr("Error"), QObject::tr("signoutname password error"));
+		 return;
+	 }
+	 if(!effectiveFlagofSignInName){
+		 QMessageBox::information(NULL, QObject::tr("Error"), QObject::tr("signinname password error"));
+		 return;
+	 }
 
 	 //7获取用户选取的上班地点
 	 /*

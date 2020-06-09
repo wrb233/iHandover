@@ -7,7 +7,8 @@
 #include "CreateTable.h"
 #include "signout.h"
 #include "signin.h"
-#include "information.h"
+#include "signininformation.h"
+#include "signoutinformation.h"
 #include "confirm.h"
 #include <QApplication>
 #include <QTextCodec>

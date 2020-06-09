@@ -35,17 +35,12 @@
    <item row="1" column="2">
     <widget class="QPushButton" name="okButton">
      <property name="text">
-      <string>确认录入</string>
+      <string>确认配置</string>
      </property>
     </widget>
    </item>
    <item row="0" column="0" colspan="3">
     <widget class="QTableWidget" name="tableWidgetConfiguration">
-     <column>
-      <property name="text">
-       <string/>
-      </property>
-     </column>
      <column>
       <property name="text">
        <string/>

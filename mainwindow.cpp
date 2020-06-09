@@ -6,9 +6,11 @@
 #include <QTime>
 #include <QDebug>
 #include <QMessageBox>
+#include <QDateTime>
 #include "signout.h"
 #include "signin.h"
-#include "information.h"
+#include "signininformation.h"
+#include "signoutinformation.h"
 #include "confirm.h"
 #include "ToolUtil.h"
 
@@ -40,9 +42,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->SignInAndOut_tableview->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->SignInAndOut_tableview->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-	connect(ui->SignInAndOut_tableview,SIGNAL(doubleClicked  (const QModelIndex)),this,SLOT(slotDoubleClickTreeNode(const QModelIndex)));
+	//双击实现查询
+	connect(ui->SignInAndOut_tableview,SIGNAL(doubleClicked  (const QModelIndex &)),this,SLOT(slotDoubleClickTreeNode(const QModelIndex &)));
 
-
+	
 
 	//点击交班动作触发交班页面
 	connect(ui->actionSignOut,SIGNAL(triggered()),this, SLOT(showSignOutDialog()));
@@ -51,11 +54,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	//点击确认动作触发交接班确认页面
 	connect(ui->actionConfirm,SIGNAL(triggered()),this, SLOT(showConfirmDialog()));
 
-
+	//点击打印动作触发打印预览页面
 	connect(ui->actionPrint,SIGNAL(triggered()),this, SLOT(showPrintDialog()));
 
 
-
+	//点击配置动作触发确认配置页面
 	connect(ui->actionConfiguration,SIGNAL(triggered()),this, SLOT(showConfigurationForm()));
 
 
@@ -188,146 +191,137 @@ void MainWindow::showSignOutDialog()
 	SignOut signout;
 	if (signout.exec()==QDialog::Accepted)
 	{
-		//1获取点击交班时的当前日期时间,右时间
+		//这里用户每次交班查询都会先查看用户所选班次内新表里面有没有对应的数据，如果没有，那么就从老表去拿（左右时间就固定在所选班次对应的左右时间），如果有就追加（左时间为当前对应班次已有的时间+1s，右时间为所选班次对应的右时间）
+		
+		//1获取点击交班时的当前日期时间
 		QDateTime signoutcurDateTime=signout.getcurDateTimedata();
 		//2获取用户选取的交班人
 		QString signoutname = signout.getsignoutnamedata();
-		//3获取交班时间,左时间
+		//3获取交班时间
 		QDateTime signoutTime_QDateEdit = signout.getsignoutTime_QDateEditdata();
 		//4获取交班序号
 		QString signout_shitf = signout.getsignout_shitfdata();
 
-		Information information;
+		SignOutInformation signoutinformation;
 
+		//根据交班序号可以取到左右时间，特殊情况为跨天
+
+
+	
+
+		//获取用户选择的交班时间段，左时间和右时间
+		QDateTime startdate = signoutinformation.getSignPageDate(signoutTime_QDateEdit);
+
+		QString startshift = signoutinformation.getSignPageShift(signout_shitf);
+
+
+		Configuration configuration;
+		QString strstarttime = configuration.leftTime(startdate,startshift);//左时间
 		
-		//获取用户选择的交班时间段，右时间
-		QDateTime endtime = information.getSignPageTime(signoutcurDateTime);
-		QString strendtime = endtime.toString("yyyy-MM-dd hh:mm:ss");
-		//qDebug()<<endtime;
-
-		//获取用户选择的交班时间段，左时间
-		QDateTime startdate = information.getSignPageDate(signoutTime_QDateEdit);
-		QString strstartdate = startdate.toString("yyyy-MM-dd");  
-		
-		QString startshift = information.getSignPageShift(signout_shitf);
+		QString strendtime = configuration.rightTime(startdate,startshift);//右时间
 		
 
-		//根据date和shift拼接字符串左时间时间点
-		QString strstarttime;//初始化左时间
-		RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX="+startshift;
-		int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
-		int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
-		QString strhour = QString::number(work_start);
-		if (strhour.length()==1)
-			strstarttime = QString("%1 0%2:00:00")
-					               .arg(strstartdate)
-								   .arg(strhour);
-		else
-			strstarttime = QString("%1 %2:00:00")
-				                   .arg(strstartdate)
-				                   .arg(strhour);
-		//qDebug()<<work_start;
-		//QString strstarttime = strstartdate+' '+strhourminsec;
-		CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
 
 
 
-
-		//判断事故信息新表里面数据条数
+		//1判断事故信息新表里面数据条数,必须判断新表里用户所选的班次内有没有数据
 		RECORDSETHANDLE isfaaccidentNullSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqlfaaccidentisNull = "select COUNT(*) from H_FA_ACCIDENTINFO";
+		QString sqlfaaccidentisNull = "select COUNT(*) from H_FA_ACCIDENTINFO where time between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 		int rowsOfTersqlfaaccidentisNull = CPS_ORM_RsLoadData(isfaaccidentNullSetHandle,sqlfaaccidentisNull.toUtf8().data(),dbPoolHandle);
 		int itemsoffaaccident = CPS_ORM_RsGetNumberValue(isfaaccidentNullSetHandle,0,0);
 		CPS_ORM_RsFreeRecordSet(isfaaccidentNullSetHandle);
 
-		//先从事故信息老表里面展示已有数据
+		//1先从事故信息老表里面展示已有数据
 		if (itemsoffaaccident == 0)
-			information.firstshowFAaccidentInfo(strstarttime, strendtime ,startshift);
-		//事故信息新表里面已经有数据了，先把新表数据展示，然后再查老表
+			signoutinformation.firstshowFAaccidentInfo(strstarttime, strendtime ,startshift);
+		//1事故信息新表里面已经有数据了，先把新表数据展示，然后再查老表
 		else
-			information.secondshowFAaccidentInfo(strstarttime, strendtime ,startshift);
+			signoutinformation.secondshowFAaccidentInfo(strstarttime, strendtime ,startshift);
 
-		//判断检修计划新表里面数据条数
+		//2判断检修计划新表里面数据条数,必须判断新表里用户所选的班次内有没有数据
 		RECORDSETHANDLE ismaintenanceplanNullSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqlmaintenanceplanisNull = "select COUNT(*) from H_MAINTENANCE_PLAN";
+		QString sqlmaintenanceplanisNull = "select COUNT(*) from H_MAINTENANCE_PLAN where time between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 		int rowsOfTersqlmaintenanceplanisNull = CPS_ORM_RsLoadData(ismaintenanceplanNullSetHandle,sqlmaintenanceplanisNull.toUtf8().data(),dbPoolHandle);
 		int itemsofmaintenanceplan = CPS_ORM_RsGetNumberValue(ismaintenanceplanNullSetHandle,0,0);
 		CPS_ORM_RsFreeRecordSet(ismaintenanceplanNullSetHandle);
 
-		//先从检修计划老表里面展示已有数据
+		//2先从检修计划老表里面展示已有数据
 		if (itemsofmaintenanceplan == 0)
-			information.firstshowMaintenancePlan(strstarttime, strendtime ,startshift);
-		//检修计划新表里面已经有数据了，先把新表数据展示，然后再查老表
+			signoutinformation.firstshowMaintenancePlan(strstarttime, strendtime ,startshift);
+		//2检修计划新表里面已经有数据了，先把新表数据展示，然后再查老表
 		else
-			information.secondshowMaintenancePlan(strstarttime, strendtime ,startshift);
+			signoutinformation.secondshowMaintenancePlan(strstarttime, strendtime ,startshift);
 
-		//判断遥控记录新表里面数据条数
+		//3判断遥控记录新表里面数据条数,必须判断新表里用户所选的班次内有没有数据
 		RECORDSETHANDLE isdpcpointNullSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqldpcpointisNull = "select COUNT(*) from H_DPC_OPTRECORD";
+		QString sqldpcpointisNull = "select COUNT(*) from H_DPC_OPTRECORD where time between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 		int rowsOfTersqldpcpointisNull = CPS_ORM_RsLoadData(isdpcpointNullSetHandle,sqldpcpointisNull.toUtf8().data(),dbPoolHandle);
 		int itemsofdpcpoint = CPS_ORM_RsGetNumberValue(isdpcpointNullSetHandle,0,0);
 		CPS_ORM_RsFreeRecordSet(isdpcpointNullSetHandle);
 
-		//先从遥控记录老表里面展示已有数据
+		//3先从遥控记录老表里面展示已有数据
 		if (itemsofdpcpoint == 0)
-			information.firstshowDPCOptRecord(strstarttime, strendtime ,startshift);
-		//遥控记录新表里面已经有数据了，先把新表数据展示，然后再查老表
+			signoutinformation.firstshowDPCOptRecord(strstarttime, strendtime ,startshift);
+		//3遥控记录新表里面已经有数据了，先把新表数据展示，然后再查老表
 		else
-			information.secondshowDPCOptRecord(strstarttime, strendtime ,startshift);
+			signoutinformation.secondshowDPCOptRecord(strstarttime, strendtime ,startshift);
 
 			
 
-		//判断线路重载新表里面数据条数
+		//4判断线路重载新表里面数据条数,必须判断新表里用户所选的班次内有没有数据
 		RECORDSETHANDLE isfeederoverloadNullSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqlfeederoverloadisNull = "select COUNT(*) from H_FEEDER_OVERLOAD";
+		QString sqlfeederoverloadisNull = "select COUNT(*) from H_FEEDER_OVERLOAD where time between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 		int rowsOfTersqlfeederoverloadisNull = CPS_ORM_RsLoadData(isfeederoverloadNullSetHandle,sqlfeederoverloadisNull.toUtf8().data(),dbPoolHandle);
 		int itemsoffeederoverload = CPS_ORM_RsGetNumberValue(isfeederoverloadNullSetHandle,0,0);
 		CPS_ORM_RsFreeRecordSet(isfeederoverloadNullSetHandle);
 
-		//先从线路重载老表里面展示已有数据
+		//4先从线路重载老表里面展示已有数据
 		if (itemsoffeederoverload == 0)
-			information.firstshowFeederOverload(strstarttime, strendtime ,startshift);
-		//线路重载新表里面已经有数据了，先把新表数据展示，然后再查老表
+			signoutinformation.firstshowFeederOverload(strstarttime, strendtime ,startshift);
+		//4线路重载新表里面已经有数据了，先把新表数据展示，然后再查老表
 		else
-			information.secondshowFeederOverload(strstarttime, strendtime ,startshift);
+			signoutinformation.secondshowFeederOverload(strstarttime, strendtime ,startshift);
 
 		
 
 
 
 		//用户编辑完点确认，进行入库操作，其中录入时间是主键
-		if (information.exec()==QDialog::Accepted)
+		if (signoutinformation.exec()==QDialog::Accepted)
 		{
 
 
 			//获取点击信息页面确认的当前日期时间,录入时间（非常重要）
-			QDateTime informationcurDateTime=information.getcurDateTimedata();
+			QDateTime informationcurDateTime=signoutinformation.getcurDateTimedata();
 			qDebug()<<informationcurDateTime;
 
 
 			//事故信息写入
 			if (itemsoffaaccident == 0)
-				information.firstwriteFAaccidentTable(strstarttime, strendtime, startshift, informationcurDateTime);
+				signoutinformation.firstwriteFAaccidentTable(strstarttime, strendtime, startshift, informationcurDateTime);
 
 			else
-				information.secondwriteFAaccidentTable(strstarttime, strendtime, startshift, informationcurDateTime);
-
-
+				signoutinformation.secondwriteFAaccidentTable(strstarttime, strendtime, startshift, informationcurDateTime);
+			//检修计划写入
+			if (itemsofmaintenanceplan == 0)
+				signoutinformation.firstwriteMaintenancePlanTable(strstarttime, strendtime ,startshift, informationcurDateTime);
+			
+			else
+				signoutinformation.secondwriteMaintenancePlanTable(strstarttime, strendtime ,startshift, informationcurDateTime);
 			
 			//遥控记录写入
 			if (itemsofdpcpoint == 0)
-				information.firstwriteDPCOptRecordTable(strstarttime, strendtime, startshift, informationcurDateTime);
-			//遥控记录新表里面已经有数据了，先把新表数据展示，然后再查老表
+				signoutinformation.firstwriteDPCOptRecordTable(strstarttime, strendtime, startshift, informationcurDateTime);
+			
 			else
-				information.secondwriteDPCOptRecordTable(strstarttime, strendtime, startshift, informationcurDateTime);
+				signoutinformation.secondwriteDPCOptRecordTable(strstarttime, strendtime, startshift, informationcurDateTime);
 
 			//线路重载写入
 			if (itemsoffeederoverload == 0)
-				information.firstwriteFeederOverloadTable(strstarttime, strendtime, startshift, informationcurDateTime);
-			//线路重载新表里面已经有数据了，先把新表数据展示，然后再查老表
+				signoutinformation.firstwriteFeederOverloadTable(strstarttime, strendtime, startshift, informationcurDateTime);
+			
 			else
-				information.secondwriteFeederOverloadTable(strstarttime, strendtime, startshift, informationcurDateTime);
+				signoutinformation.secondwriteFeederOverloadTable(strstarttime, strendtime, startshift, informationcurDateTime);
 
 
 
@@ -360,53 +354,36 @@ void MainWindow::showSignInDialog()
 		//4获取接班序号
 		QString signin_shitf = signin.getsignin_shitfdata();
 
-		Information information;
+		SignInInformation signininformation;
 
 
-		//获取用户选择的接班时间段，右时间
-		QDateTime endtime = information.getSignPageTime(signincurDateTime);
-		QString strendtime = endtime.toString("yyyy-MM-dd hh:mm:ss");
-		//qDebug()<<endtime;
-
-		//获取用户选择的接班时间段，左时间
-		QDateTime startdate = information.getSignPageDate(signinTime_QDateEdit);
-		QString strstartdate = startdate.toString("yyyy-MM-dd");  
-
-		QString startshift = information.getSignPageShift(signin_shitf);
-
-
-		//根据date和shift拼接字符串左时间时间点
-		QString strstarttime;//初始化左时间
-		RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX="+startshift;
-		int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
-		int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
-		QString strhour = QString::number(work_start);
-		if (strhour.length()==1)
-			strstarttime = QString("%1 0%2:00:00")
-			.arg(strstartdate)
-			.arg(strhour);
-		else
-			strstarttime = QString("%1 %2:00:00")
-			.arg(strstartdate)
-			.arg(strhour);
-		//qDebug()<<work_start;
-		//QString strstarttime = strstartdate+' '+strhourminsec;
-		CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
+		
+		//根据交班序号可以取到左右时间，特殊情况为跨天
 
 
 
-		qDebug()<<strstarttime;
-		qDebug()<<strendtime;
 
-		//查我自己建的四张新表里的数据，如果没有就只展示列名称
+		//获取用户选择的交班时间段，左时间和右时间
+		QDateTime startdate = signininformation.getSignPageDate(signinTime_QDateEdit);
 
-		information.showsigninFAaccidentInfo(strstarttime, strendtime ,startshift);
-		information.showsigninMaintenancePlan(strstarttime, strendtime ,startshift);
-		information.showsigninDPCOptRecord(strstarttime, strendtime ,startshift);
-		information.showsigninFeederOverload(strstarttime, strendtime ,startshift);
+		QString startshift = signininformation.getSignPageShift(signin_shitf);
 
-		information.exec();
+
+		Configuration configuration;
+		QString strstarttime = configuration.leftTime(startdate,startshift);//左时间
+
+		QString strendtime = configuration.rightTime(startdate,startshift);//右时间
+
+		
+
+	
+
+		signininformation.showsigninFAaccidentInfo(strstarttime, strendtime ,startshift);
+		signininformation.showsigninMaintenancePlan(strstarttime, strendtime ,startshift);
+		signininformation.showsigninDPCOptRecord(strstarttime, strendtime ,startshift);
+		signininformation.showsigninFeederOverload(strstarttime, strendtime ,startshift);
+
+		signininformation.exec();
 
 }
 }
@@ -510,6 +487,18 @@ void MainWindow::slotDoubleClickTreeNode(const QModelIndex index)
 
 
 	*/
+	QAbstractItemModel *Imodel=ui->SignInAndOut_tableview->model();
+	QModelIndex Iindex = Imodel->index(index.row(),3);//index.row()为算选择的行号。1为所选中行的第一列。。
+	QVariant datatemp=Imodel->data(Iindex);
+	QString name=datatemp.toString();//name即为所选择行的第3列的值
+
+
+
+	
+
+	SignInInformation signininformation;
+
+	signininformation.exec();
 }
 
 void MainWindow::queryAtTime()
@@ -531,9 +520,20 @@ void MainWindow::queryAtTime()
 	//QTableView平均分配列宽
 	ui->SignInAndOut_tableview->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 
-
+	//查找时间差
+	RECORDSETHANDLE startshiftSetHandle = CPS_ORM_RsNewRecordSet();
+	QString sqlstartshift = "select WOR_START from H_WORK_HOURS where WORK_INDEX=0";//当前时间和排班时间存在时间差
+	int rowsOfTersqlstartshift = CPS_ORM_RsLoadData(startshiftSetHandle,sqlstartshift.toUtf8().data(),dbPoolHandle);
+	int work_start = CPS_ORM_RsGetNumberValue(startshiftSetHandle,0,0);
+	CPS_ORM_RsFreeRecordSet(startshiftSetHandle);
+	//起始时间
 	QDateTime startTime = ui->startTime->dateTime();
+	int startTime_timetimestamp = startTime.toTime_t()+60*60*work_start;//往后推若干小时
+	QDateTime startTime_timeplus = QDateTime::fromTime_t(startTime_timetimestamp);
+	//结束时间
 	QDateTime endTime = ui->endTime->dateTime();
+	int endTime_timetimestamp = endTime.toTime_t()+60*60*work_start;//往后推若干小时
+	QDateTime endTime_timeplus = QDateTime::fromTime_t(endTime_timetimestamp);
 	
 	RECORDSETHANDLE SignInAndOutSetHandle = CPS_ORM_RsNewRecordSet();
 	//QString sqlSignInAndOut = "select TIME, HANDOVER, SUCCESSOR, WORK_DAY, WORK_INDEX, NOTE, WORK_PLACE from H_SIGNINANDOUT \
@@ -547,7 +547,7 @@ void MainWindow::queryAtTime()
 
 
 	QString sqlSignInAndOut="select a.TIME, a.HANDOVER, a.SUCCESSOR, a.WORK_DAY, b.WORK_NAME, a.NOTE from H_SIGNINANDOUT a,H_WORK_HOURS b \
-							where a.WORK_INDEX=b.WORK_INDEX and a.TIME between to_date('"+startTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss') and to_date('"+endTime.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss')+1 order by a.TIME";
+							where a.WORK_INDEX=b.WORK_INDEX and a.TIME between to_date('"+startTime_timeplus.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss') and to_date('"+endTime_timeplus.toString("yyyy-MM-dd hh:mm:ss")+"','yyyy-MM-dd hh24:mi:ss')+1 order by a.TIME";
 
 
 
@@ -655,6 +655,9 @@ void MainWindow::showPrintDialog()
 	//confirm.show();
 	if (print.exec()==QDialog::Accepted)
 	{
+
+
+
 	}
 	
 }
@@ -671,9 +674,25 @@ void MainWindow::showConfigurationForm()
 
 	Configuration configuration;
 
-	//confirm.show();
+	//configuration.show();
+
+	//configuration.exec();
+
+	//configuration.show();
+
+	
 	if (configuration.exec()==QDialog::Accepted)
 	{
-	}
 
+
+		
+
+
+
+
+
+	}
+	
+	
+	
 }

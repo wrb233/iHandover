@@ -8,26 +8,23 @@
 
 #include <QCoreApplication>
 
-#ifndef INFORMATION_H
-#define INFORMATION_H
+#ifndef SIGNOUTINFORMATION_H
+#define SIGNOUTINFORMATION_H
  
 namespace Ui {
 
-class Information;
+class SignOutInformation;
 
 }
  
  
-class Information : public QDialog
+class SignOutInformation : public QDialog
 {
     Q_OBJECT
 public:
-    explicit Information(QWidget *parent = 0);
-    ~Information();
-	void showsigninFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift);
-	void showsigninMaintenancePlan(QString strstarttime, QString strendtime, QString startshift);
-	void showsigninDPCOptRecord(QString strstarttime, QString strendtime, QString startshift);
-	void showsigninFeederOverload(QString strstarttime, QString strendtime, QString startshift);
+    explicit SignOutInformation(QWidget *parent = 0);
+    ~SignOutInformation();
+	
 	
 
 
@@ -57,12 +54,12 @@ public:
 	void firstwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	void firstwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	void firstwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
-	
+	void firstwriteMaintenancePlanTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	
 	void secondwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	void secondwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	void secondwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
-
+	void secondwriteMaintenancePlanTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	
 	
 
@@ -73,6 +70,10 @@ signals:
 public slots:
 
 	void on_okButton_clicked();
+
+
+	void on_btn_Add_clicked();
+	void on_btn_Del_clicked();
 private slots:
 
 	    
@@ -92,10 +93,10 @@ private:
 
 
 
-	Ui::Information *ui;
+	Ui::SignOutInformation *ui;
 
 	
 
 };
  
-#endif // INFORMATION_H
+#endif // SIGNOUTINFORMATION_H

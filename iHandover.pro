@@ -86,10 +86,13 @@ HEADERS += common.h\
            CreateTable.h\
 		   signout.h\
 		   signin.h\
-		   information.h\
+		   signoutinformation.h\
+		   signininformation.h\
 		   print.h\
 		   configuration.h\
-		   confirm.h
+		   confirm.h\
+		   workhourdelegation.h\
+		   frmdataout.h
            
 		   
 SOURCES += mainwindow.cpp\
@@ -101,15 +104,19 @@ SOURCES += mainwindow.cpp\
            CreateTable.cpp\
 		   signout.cpp\
 		   signin.cpp\
-		   information.cpp\
+		   signoutinformation.cpp\
+		   signininformation.cpp\
 		   print.cpp\
 		   configuration.cpp\
-		   confirm.cpp
+		   confirm.cpp\
+		   workhourdelegation.cpp\
+		   frmdataout.cpp
 
 FORMS    += mainwindow.ui\
 		    signout.ui\
 			signin.ui\
-			information.ui\
+			signoutinformation.ui\
+			signininformation.ui\
 			print.ui\
 			configuration.ui\
 			confirm.ui

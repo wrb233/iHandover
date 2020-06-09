@@ -1,5 +1,6 @@
-#define IHandover_VERSION_STR "0.0.1"
-#define IHandover_REMARK_STR  "show tableviews by zw 2020-03-25,V0.0.1."
+#define IHandover_VERSION_STR "0.0.2"
+#define IHandover_REMARK_STR  "show tableviews by zw 2020-03-25,V0.0.1.\
+add print function by wl 2020-06-05,V0.0.2."
 
 #include "version.h"
 

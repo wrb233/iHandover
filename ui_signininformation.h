@@ -1,14 +1,14 @@
 /********************************************************************************
-** Form generated from reading UI file 'information.ui'
+** Form generated from reading UI file 'signininformation.ui'
 **
-** Created: Thu May 7 09:29:40 2020
+** Created: Wed Jun 10 01:02:01 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_INFORMATION_H
-#define UI_INFORMATION_H
+#ifndef UI_SIGNININFORMATION_H
+#define UI_SIGNININFORMATION_H
 
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
@@ -19,15 +19,13 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
-#include <QtGui/QPushButton>
-#include <QtGui/QSpacerItem>
 #include <QtGui/QTabWidget>
 #include <QtGui/QTableView>
 #include <QtGui/QWidget>
 
 QT_BEGIN_NAMESPACE
 
-class Ui_Information
+class Ui_SignInInformation
 {
 public:
     QGridLayout *gridLayout_5;
@@ -52,22 +50,18 @@ public:
     QWidget *tab_4;
     QGridLayout *gridLayout_2;
     QTableView *lineload_tableview;
-    QHBoxLayout *hboxLayout;
-    QSpacerItem *spacerItem;
-    QPushButton *okButton;
-    QPushButton *cancelButton;
 
-    void setupUi(QDialog *Information)
+    void setupUi(QDialog *SignInInformation)
     {
-        if (Information->objectName().isEmpty())
-            Information->setObjectName(QString::fromUtf8("Information"));
-        Information->resize(1328, 552);
+        if (SignInInformation->objectName().isEmpty())
+            SignInInformation->setObjectName(QString::fromUtf8("SignInInformation"));
+        SignInInformation->resize(1328, 552);
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/images/information.png"), QSize(), QIcon::Normal, QIcon::Off);
-        Information->setWindowIcon(icon);
-        gridLayout_5 = new QGridLayout(Information);
+        SignInInformation->setWindowIcon(icon);
+        gridLayout_5 = new QGridLayout(SignInInformation);
         gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
-        tabWidget = new QTabWidget(Information);
+        tabWidget = new QTabWidget(SignInInformation);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
         tab = new QWidget();
         tab->setObjectName(QString::fromUtf8("tab"));
@@ -152,63 +146,36 @@ public:
 
         gridLayout_5->addWidget(tabWidget, 0, 0, 1, 1);
 
-        hboxLayout = new QHBoxLayout();
-#ifndef Q_OS_MAC
-        hboxLayout->setSpacing(6);
-#endif
-        hboxLayout->setContentsMargins(0, 0, 0, 0);
-        hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
-        spacerItem = new QSpacerItem(131, 31, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        hboxLayout->addItem(spacerItem);
-
-        okButton = new QPushButton(Information);
-        okButton->setObjectName(QString::fromUtf8("okButton"));
-
-        hboxLayout->addWidget(okButton);
-
-        cancelButton = new QPushButton(Information);
-        cancelButton->setObjectName(QString::fromUtf8("cancelButton"));
-
-        hboxLayout->addWidget(cancelButton);
-
-
-        gridLayout_5->addLayout(hboxLayout, 1, 0, 1, 1);
-
-
-        retranslateUi(Information);
-        QObject::connect(okButton, SIGNAL(clicked()), Information, SLOT(accept()));
-        QObject::connect(cancelButton, SIGNAL(clicked()), Information, SLOT(reject()));
+        retranslateUi(SignInInformation);
 
         tabWidget->setCurrentIndex(0);
 
 
-        QMetaObject::connectSlotsByName(Information);
+        QMetaObject::connectSlotsByName(SignInInformation);
     } // setupUi
 
-    void retranslateUi(QDialog *Information)
+    void retranslateUi(QDialog *SignInInformation)
     {
-        Information->setWindowTitle(QApplication::translate("Information", "\344\277\241\346\201\257\351\241\265\351\235\242", 0, QApplication::UnicodeUTF8));
-        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("Information", "\344\272\213\346\225\205\344\277\241\346\201\257", 0, QApplication::UnicodeUTF8));
-        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("Information", "\346\243\200\344\277\256\350\256\241\345\210\222", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("Information", "         \346\210\220\345\212\237\346\254\241\346\225\260\357\274\232", 0, QApplication::UnicodeUTF8));
-        label_5->setText(QApplication::translate("Information", "                    8", 0, QApplication::UnicodeUTF8));
-        label_3->setText(QApplication::translate("Information", "\346\254\241", 0, QApplication::UnicodeUTF8));
-        label_6->setText(QApplication::translate("Information", "         \345\244\261\350\264\245\346\254\241\346\225\260\357\274\232", 0, QApplication::UnicodeUTF8));
-        label_2->setText(QApplication::translate("Information", "                    0", 0, QApplication::UnicodeUTF8));
-        label_4->setText(QApplication::translate("Information", "\346\254\241", 0, QApplication::UnicodeUTF8));
-        tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("Information", "\351\201\245\346\216\247\350\256\260\345\275\225", 0, QApplication::UnicodeUTF8));
-        tabWidget->setTabText(tabWidget->indexOf(tab_4), QApplication::translate("Information", "\347\272\277\350\267\257\350\264\237\350\275\275", 0, QApplication::UnicodeUTF8));
-        okButton->setText(QApplication::translate("Information", "\347\241\256\350\256\244\345\275\225\345\205\245", 0, QApplication::UnicodeUTF8));
-        cancelButton->setText(QApplication::translate("Information", "\345\217\226\346\266\210", 0, QApplication::UnicodeUTF8));
+        SignInInformation->setWindowTitle(QApplication::translate("SignInInformation", "\346\216\245\347\217\255\344\277\241\346\201\257\351\241\265\351\235\242", 0, QApplication::UnicodeUTF8));
+        tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("SignInInformation", "\344\272\213\346\225\205\344\277\241\346\201\257", 0, QApplication::UnicodeUTF8));
+        tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("SignInInformation", "\346\243\200\344\277\256\350\256\241\345\210\222", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("SignInInformation", "         \346\210\220\345\212\237\346\254\241\346\225\260\357\274\232", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("SignInInformation", "                    8", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("SignInInformation", "\346\254\241", 0, QApplication::UnicodeUTF8));
+        label_6->setText(QApplication::translate("SignInInformation", "         \345\244\261\350\264\245\346\254\241\346\225\260\357\274\232", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("SignInInformation", "                    0", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("SignInInformation", "\346\254\241", 0, QApplication::UnicodeUTF8));
+        tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("SignInInformation", "\351\201\245\346\216\247\350\256\260\345\275\225", 0, QApplication::UnicodeUTF8));
+        tabWidget->setTabText(tabWidget->indexOf(tab_4), QApplication::translate("SignInInformation", "\347\272\277\350\267\257\350\264\237\350\275\275", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class Information: public Ui_Information {};
+    class SignInInformation: public Ui_SignInInformation {};
 } // namespace Ui
 
 QT_END_NAMESPACE
 
-#endif // UI_INFORMATION_H
+#endif // UI_SIGNININFORMATION_H
