@@ -57,16 +57,16 @@ void frmDataOut::initColumnFAaccidentInfo(QList<QString> &columnNames, QList<int
     columnNames << QObject::tr("accident_info") << QObject::tr("work_day") << QObject::tr("work_index") << QObject::tr("start_time") << QObject::tr("reason") << QObject::tr("note");
 
     columnWidths.clear();
-    columnWidths << 180 << 180 << 180 << 180 << 280 << 180 ;
+    columnWidths << 100 << 100 << 100 << 100 << 200 << 100 ;
 }
 
 void frmDataOut::initColumnMaintenancePlan(QList<QString> &columnNames, QList<int> &columnWidths)
 {
     columnNames.clear();
-    columnNames << QObject::tr("station") << QObject::tr("feeder") << QObject::tr("work_day") << QObject::tr("work_index") << QObject::tr("start_time") << QObject::tr("end_time") << QObject::tr("type")<< QObject::tr("reason")<<QObject::tr("powerofftime")<<QObject::tr("note");
+    columnNames << QObject::tr("station") << QObject::tr("feeder") << QObject::tr("work_day") << QObject::tr("work_index") << QObject::tr("poweroffstart_time") << QObject::tr("poweroffend_time") << QObject::tr("powerofftype")<< QObject::tr("poweroffreason")<<QObject::tr("powerofftime")<<QObject::tr("note");
 
     columnWidths.clear();
-    columnWidths << 70 << 100 << 70 << 70 << 70 << 140 << 150<< 70 << 70 << 70;
+    columnWidths << 80 << 80 << 80 << 80 << 80 << 80 << 80 << 180 << 80 << 80;
 }
 
 void frmDataOut::initColumnDPCOptRecord(QList<QString> &columnNames, QList<int> &columnWidths)
@@ -75,7 +75,7 @@ void frmDataOut::initColumnDPCOptRecord(QList<QString> &columnNames, QList<int> 
     columnNames << QObject::tr("area") << QObject::tr("station") << QObject::tr("feeder") << QObject::tr("switch")<<QObject::tr("work_day") << QObject::tr("work_index")<< QObject::tr("opt_content")<< QObject::tr("opt_time")<< QObject::tr("operatorinfo")<< QObject::tr("guarderinfo")<< QObject::tr("note");
 
     columnWidths.clear();
-    columnWidths << 70 << 100 << 70 << 70 << 70 << 140 << 150<< 70 << 70 << 70<<70;
+    columnWidths << 80 << 80 << 80 << 80 << 80 << 80 << 100 << 100 << 100 << 100 << 100;
 }
 
 void frmDataOut::initColumnFeederOverload(QList<QString> &columnNames, QList<int> &columnWidths)
@@ -84,5 +84,5 @@ void frmDataOut::initColumnFeederOverload(QList<QString> &columnNames, QList<int
     columnNames << QObject::tr("area") << QObject::tr("station") << QObject::tr("feeder") <<QObject::tr("work_day") << QObject::tr("work_index")<< QObject::tr("amprating")<< QObject::tr("max_current")<< QObject::tr("occur_time")<< QObject::tr("overloadrate")<< QObject::tr("note");
 
     columnWidths.clear();
-    columnWidths << 70 << 100 << 70 << 70 << 70 << 140 << 150<< 70 << 70 << 70;
+    columnWidths << 80 << 80 << 80 << 80 << 80 << 80 << 80 << 80 << 80 << 180;
 }

@@ -93,14 +93,17 @@ int main(int argc, char *argv[])
 
    // QApplication a(argc, argv);
 
-	/*
+	
 	char* cpsenv = getenv("CPS_ENV");
 	QString transPath = QDir::fromNativeSeparators(QString::fromUtf8(cpsenv)) + "/resource/"; 
 	QTranslator translator;
 	translator.load(transPath+"iHandover_zh_CN.qm");
-	*/
+	
+	
+	/*
 	QTranslator translator;
 	translator.load("iHandover_zh_CN.qm");
+	*/
 
 	
 

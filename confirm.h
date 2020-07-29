@@ -4,26 +4,18 @@
 #include <QDateEdit>
 #include <QComboBox>
 #include <QPushButton>
-
 #include "libUserMS/UserMSInterface.h"
-
 #ifndef CONFIRM_H
 #define CONFIRM_H
- 
 namespace Ui {
-
 class Confirm;
-
 }
- 
- 
 class Confirm : public QDialog
 {
     Q_OBJECT //使用信号与槽需要的宏
 public:
     explicit Confirm(QWidget *parent = 0);  //explicit 防止歧义
     ~Confirm();
-
 	//7个属性
 	QDateTime getcurDateTimedata();
 	QString getsigninnamedata();
@@ -32,20 +24,12 @@ public:
 	QString getsigninandout_shitfdata();
 	QString getsigninandoutNote_QTextEditdata();
 	//QString getworkplacenamedata();
-
-
-	
-
-
-	 
-
 signals:
  
 public slots:
-
-	 void on_okButton_clicked();
-	private slots:
-		//void insertSignInAndOutTable();
+	void on_okButton_clicked();
+private slots:
+	//void insertSignInAndOutTable();
 private:
 	
 	//定义private属性信息，供给其他类使用

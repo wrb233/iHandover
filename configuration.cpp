@@ -150,7 +150,7 @@ bool Configuration::isTimeScale(int startTimeHour, int endTimeHour)
 	//不跨天的情况
 	if (startMin < endMin )
 	{
-		if (startMin <= curMin && curMin <= endMin)
+		if (startMin <= curMin && curMin < endMin)//左闭右开
 		{
 			return true;
 		}

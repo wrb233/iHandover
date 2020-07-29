@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1328</width>
+    <width>1266</width>
     <height>552</height>
    </rect>
   </property>
@@ -58,7 +58,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -74,12 +74,12 @@
       <attribute name="title">
        <string>检修计划</string>
       </attribute>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>13</x>
          <y>14</y>
-         <width>1281</width>
+         <width>1220</width>
          <height>441</height>
         </rect>
        </property>
@@ -103,7 +103,7 @@
          </layout>
         </item>
         <item row="1" column="0">
-         <widget class="QTableWidget" name="maintenanceplan_tableWidget"/>
+         <widget class="QTableView" name="maintenanceplan_tableview"/>
         </item>
        </layout>
       </widget>
@@ -112,18 +112,67 @@
       <attribute name="title">
        <string>遥控记录</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="0">
-        <layout class="QGridLayout" name="gridLayout_7">
-         <item row="0" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QTableView" name="DPCPoint_tableview"/>
-         </item>
-        </layout>
-       </item>
-      </layout>
+      <widget class="QWidget" name="layoutWidget2">
+       <property name="geometry">
+        <rect>
+         <x>13</x>
+         <y>14</y>
+         <width>1220</width>
+         <height>441</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>成功次数:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>次</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>失败次数:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>次</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <widget class="QTableView" name="DPCPoint_tableview"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">

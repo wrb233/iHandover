@@ -8,6 +8,9 @@
 
 #include <QCoreApplication>
 
+#include "common.h"
+#include "ToolUtil.h"
+
 #ifndef SIGNOUTINFORMATION_H
 #define SIGNOUTINFORMATION_H
  
@@ -26,18 +29,19 @@ public:
     ~SignOutInformation();
 	
 	
-
-
+	
+	int getsuccessTimes(QString strstarttime, QString strendtime, QString startshift);
+	int getfailTimes(QString strstarttime, QString strendtime, QString startshift);
 
 	
 	void firstshowFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift);
-	void firstshowMaintenancePlan(QString strstarttime, QString strendtime, QString startshift);
+	void firstshowMaintenancePlan(QString strstarttime, QString strendtime, QDateTime startdate, QString startshift);
 	void firstshowDPCOptRecord(QString strstarttime, QString strendtime, QString startshift);
 	void firstshowFeederOverload(QString strstarttime, QString strendtime, QString startshift);
 	
 	
 	void secondshowFAaccidentInfo(QString strstarttime, QString strendtime, QString startshift);
-	void secondshowMaintenancePlan(QString strstarttime, QString strendtime, QString startshift);
+	void secondshowMaintenancePlan(QString strstarttime, QString strendtime, QDateTime startdate, QString startshift);
 	void secondshowDPCOptRecord(QString strstarttime, QString strendtime, QString startshift);
 	void secondshowFeederOverload(QString strstarttime, QString strendtime, QString startshift);
 
@@ -54,12 +58,12 @@ public:
 	void firstwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	void firstwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	void firstwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
-	void firstwriteMaintenancePlanTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
+	void firstwriteMaintenancePlanTable(QString strstarttime, QString strendtime, QDateTime startdate, QString startshift, QDateTime informationcurDateTime);
 	
 	void secondwriteFAaccidentTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	void secondwriteDPCOptRecordTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
 	void secondwriteFeederOverloadTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
-	void secondwriteMaintenancePlanTable(QString strstarttime, QString strendtime, QString startshift, QDateTime informationcurDateTime);
+	void secondwriteMaintenancePlanTable(QString strstarttime, QString strendtime, QDateTime startdate, QString startshift, QDateTime informationcurDateTime);
 	
 	
 
@@ -78,6 +82,23 @@ private slots:
 
 	    
 private:
+
+	
+
+
+
+
+
+
+
+	Ui::SignOutInformation *ui;
+
+	QStandardItemModel* FAInfo_model;
+	QStandardItemModel* MaintenancePlan_model;
+	QStandardItemModel* DPCPoint_model;
+	QStandardItemModel* FeederOverload_model;
+
+
 	QDateTime informationcurDateTime;
 
 	QDateTime signpagetime;
@@ -87,13 +108,9 @@ private:
 	QString signpageshift;
 
 
+	int successTimes;
+	int failTimes;
 
-
-
-
-
-
-	Ui::SignOutInformation *ui;
 
 	
 

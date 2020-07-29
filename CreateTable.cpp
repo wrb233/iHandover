@@ -239,7 +239,7 @@ bool createTable(QString tablename)
 		
 
 		newTableConfig[0].m_strName = "AREA";//区域，开关所属区域
-		newTableConfig[0].m_strType = "bigint(19)";
+		newTableConfig[0].m_strType = "char(1024)";
 		newTableConfig[0].m_bNullOK = 1;
 		newTableConfig[0].m_strDefault = "0";
 		newTableConfig[0].m_bKey = 0;
@@ -247,7 +247,7 @@ bool createTable(QString tablename)
 		newTableConfig[0].m_bIndexed = 0;
 
 		newTableConfig[1].m_strName = "STATION";//变电站，开关所属变电站
-		newTableConfig[1].m_strType = "bigint(19)";
+		newTableConfig[1].m_strType = "char(1024)";
 		newTableConfig[1].m_bNullOK = 1;
 		newTableConfig[1].m_strDefault = "0";
 		newTableConfig[1].m_bKey = 0;
@@ -255,7 +255,7 @@ bool createTable(QString tablename)
 		newTableConfig[1].m_bIndexed = 0;
 
 		newTableConfig[2].m_strName = "FEEDER";//线路名称，开关所属线路
-		newTableConfig[2].m_strType = "bigint(19)";
+		newTableConfig[2].m_strType = "char(1024)";
 		newTableConfig[2].m_bNullOK = 1;
 		newTableConfig[2].m_strDefault = "0";
 		newTableConfig[2].m_bKey = 0;
@@ -263,7 +263,7 @@ bool createTable(QString tablename)
 		newTableConfig[2].m_bIndexed = 0;
 
 		newTableConfig[3].m_strName = "SWITCH";//开关名称
-		newTableConfig[3].m_strType = "bigint(19)";
+		newTableConfig[3].m_strType = "char(1024)";
 		newTableConfig[3].m_bNullOK = 1;
 		newTableConfig[3].m_strDefault = "0";
 		newTableConfig[3].m_bKey = 0;
@@ -356,7 +356,7 @@ bool createTable(QString tablename)
 		
 
 		newTableConfig[0].m_strName = "AREA";//区域，线路所属区域
-		newTableConfig[0].m_strType = "bigint(19)";
+		newTableConfig[0].m_strType = "char(1024)";
 		newTableConfig[0].m_bNullOK = 1;
 		newTableConfig[0].m_strDefault = "0";
 		newTableConfig[0].m_bKey = 0;
@@ -364,7 +364,7 @@ bool createTable(QString tablename)
 		newTableConfig[0].m_bIndexed = 0;
 
 		newTableConfig[1].m_strName = "STATION";//变电站，线路所属变电站
-		newTableConfig[1].m_strType = "bigint(19)";
+		newTableConfig[1].m_strType = "char(1024)";
 		newTableConfig[1].m_bNullOK = 1;
 		newTableConfig[1].m_strDefault = "0";
 		newTableConfig[1].m_bKey = 0;
@@ -372,7 +372,7 @@ bool createTable(QString tablename)
 		newTableConfig[1].m_bIndexed = 0;
 
 		newTableConfig[2].m_strName = "FEEDER";//线路名称
-		newTableConfig[2].m_strType = "bigint(19)";
+		newTableConfig[2].m_strType = "char(1024)";
 		newTableConfig[2].m_bNullOK = 1;
 		newTableConfig[2].m_strDefault = "0";
 		newTableConfig[2].m_bKey = 0;

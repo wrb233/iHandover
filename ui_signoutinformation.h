@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'signoutinformation.ui'
 **
-** Created: Wed Jun 10 01:02:01 2020
+** Created: Tue Jul 28 14:01:42 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -18,11 +18,11 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
 #include <QtGui/QPushButton>
 #include <QtGui/QSpacerItem>
 #include <QtGui/QTabWidget>
 #include <QtGui/QTableView>
-#include <QtGui/QTableWidget>
 #include <QtGui/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -40,16 +40,22 @@ public:
     QGridLayout *gridLayout_4;
     QTableView *accidentinfo_tableview;
     QWidget *tab_2;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout_2;
     QPushButton *Add;
     QPushButton *Del;
-    QTableWidget *maintenanceplan_tableWidget;
+    QTableView *maintenanceplan_tableview;
     QWidget *tab_3;
+    QWidget *layoutWidget2;
     QGridLayout *gridLayout_6;
-    QGridLayout *gridLayout_7;
     QHBoxLayout *horizontalLayout;
+    QLabel *label_3;
+    QLabel *label_6;
+    QLabel *label_5;
+    QLabel *label_4;
+    QLabel *label_2;
+    QLabel *label;
     QTableView *DPCPoint_tableview;
     QWidget *tab_4;
     QGridLayout *gridLayout_2;
@@ -59,7 +65,7 @@ public:
     {
         if (SignOutInformation->objectName().isEmpty())
             SignOutInformation->setObjectName(QString::fromUtf8("SignOutInformation"));
-        SignOutInformation->resize(1328, 552);
+        SignOutInformation->resize(1266, 552);
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/images/information.png"), QSize(), QIcon::Normal, QIcon::Off);
         SignOutInformation->setWindowIcon(icon);
@@ -104,20 +110,20 @@ public:
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
-        widget = new QWidget(tab_2);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        widget->setGeometry(QRect(13, 14, 1281, 441));
-        gridLayout = new QGridLayout(widget);
+        layoutWidget = new QWidget(tab_2);
+        layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
+        layoutWidget->setGeometry(QRect(13, 14, 1220, 441));
+        gridLayout = new QGridLayout(layoutWidget);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         gridLayout->setContentsMargins(0, 0, 0, 0);
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        Add = new QPushButton(widget);
+        Add = new QPushButton(layoutWidget);
         Add->setObjectName(QString::fromUtf8("Add"));
 
         horizontalLayout_2->addWidget(Add);
 
-        Del = new QPushButton(widget);
+        Del = new QPushButton(layoutWidget);
         Del->setObjectName(QString::fromUtf8("Del"));
 
         horizontalLayout_2->addWidget(Del);
@@ -125,30 +131,59 @@ public:
 
         gridLayout->addLayout(horizontalLayout_2, 0, 0, 1, 1);
 
-        maintenanceplan_tableWidget = new QTableWidget(widget);
-        maintenanceplan_tableWidget->setObjectName(QString::fromUtf8("maintenanceplan_tableWidget"));
+        maintenanceplan_tableview = new QTableView(layoutWidget);
+        maintenanceplan_tableview->setObjectName(QString::fromUtf8("maintenanceplan_tableview"));
 
-        gridLayout->addWidget(maintenanceplan_tableWidget, 1, 0, 1, 1);
+        gridLayout->addWidget(maintenanceplan_tableview, 1, 0, 1, 1);
 
         tabWidget->addTab(tab_2, QString());
         tab_3 = new QWidget();
         tab_3->setObjectName(QString::fromUtf8("tab_3"));
-        gridLayout_6 = new QGridLayout(tab_3);
+        layoutWidget2 = new QWidget(tab_3);
+        layoutWidget2->setObjectName(QString::fromUtf8("layoutWidget2"));
+        layoutWidget2->setGeometry(QRect(13, 14, 1220, 441));
+        gridLayout_6 = new QGridLayout(layoutWidget2);
         gridLayout_6->setObjectName(QString::fromUtf8("gridLayout_6"));
-        gridLayout_7 = new QGridLayout();
-        gridLayout_7->setObjectName(QString::fromUtf8("gridLayout_7"));
+        gridLayout_6->setContentsMargins(0, 0, 0, 0);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        label_3 = new QLabel(layoutWidget2);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
 
-        gridLayout_7->addLayout(horizontalLayout, 0, 0, 1, 1);
+        horizontalLayout->addWidget(label_3);
 
-        DPCPoint_tableview = new QTableView(tab_3);
+        label_6 = new QLabel(layoutWidget2);
+        label_6->setObjectName(QString::fromUtf8("label_6"));
+
+        horizontalLayout->addWidget(label_6);
+
+        label_5 = new QLabel(layoutWidget2);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+
+        horizontalLayout->addWidget(label_5);
+
+        label_4 = new QLabel(layoutWidget2);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+
+        horizontalLayout->addWidget(label_4);
+
+        label_2 = new QLabel(layoutWidget2);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+
+        horizontalLayout->addWidget(label_2);
+
+        label = new QLabel(layoutWidget2);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        horizontalLayout->addWidget(label);
+
+
+        gridLayout_6->addLayout(horizontalLayout, 0, 0, 1, 1);
+
+        DPCPoint_tableview = new QTableView(layoutWidget2);
         DPCPoint_tableview->setObjectName(QString::fromUtf8("DPCPoint_tableview"));
 
-        gridLayout_7->addWidget(DPCPoint_tableview, 1, 0, 1, 1);
-
-
-        gridLayout_6->addLayout(gridLayout_7, 0, 0, 1, 1);
+        gridLayout_6->addWidget(DPCPoint_tableview, 1, 0, 1, 1);
 
         tabWidget->addTab(tab_3, QString());
         tab_4 = new QWidget();
@@ -169,7 +204,7 @@ public:
         QObject::connect(okButton, SIGNAL(clicked()), SignOutInformation, SLOT(accept()));
         QObject::connect(cancelButton, SIGNAL(clicked()), SignOutInformation, SLOT(reject()));
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(SignOutInformation);
@@ -184,6 +219,12 @@ public:
         Add->setText(QApplication::translate("SignOutInformation", "\346\226\260\345\242\236\344\270\200\350\241\214", 0, QApplication::UnicodeUTF8));
         Del->setText(QApplication::translate("SignOutInformation", "\345\210\240\351\231\244\344\270\200\350\241\214", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("SignOutInformation", "\346\243\200\344\277\256\350\256\241\345\210\222", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("SignOutInformation", "\346\210\220\345\212\237\346\254\241\346\225\260:", 0, QApplication::UnicodeUTF8));
+        label_6->setText(QString());
+        label_5->setText(QApplication::translate("SignOutInformation", "\346\254\241", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("SignOutInformation", "\345\244\261\350\264\245\346\254\241\346\225\260:", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QString());
+        label->setText(QApplication::translate("SignOutInformation", "\346\254\241", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("SignOutInformation", "\351\201\245\346\216\247\350\256\260\345\275\225", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_4), QApplication::translate("SignOutInformation", "\347\272\277\350\267\257\350\264\237\350\275\275", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

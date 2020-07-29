@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'signin.ui'
 **
-** Created: Wed Jun 10 01:02:01 2020
+** Created: Tue Jul 28 13:30:55 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

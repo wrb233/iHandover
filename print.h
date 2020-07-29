@@ -91,7 +91,7 @@ private:
 	QDateTime toTime_QDateEdit;
 
 
-	QString to_shitf;
+	QString to_shift;
 
 
 	QString strstarttime;

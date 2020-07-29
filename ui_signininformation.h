@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'signininformation.ui'
 **
-** Created: Wed Jun 10 01:02:01 2020
+** Created: Tue Jul 28 13:30:55 2020
 **      by: Qt User Interface Compiler version 4.8.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -18,7 +18,6 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
 #include <QtGui/QTabWidget>
 #include <QtGui/QTableView>
 #include <QtGui/QWidget>
@@ -40,12 +39,6 @@ public:
     QGridLayout *gridLayout_6;
     QGridLayout *gridLayout_7;
     QHBoxLayout *horizontalLayout;
-    QLabel *label;
-    QLabel *label_5;
-    QLabel *label_3;
-    QLabel *label_6;
-    QLabel *label_2;
-    QLabel *label_4;
     QTableView *DPCPoint_tableview;
     QWidget *tab_4;
     QGridLayout *gridLayout_2;
@@ -91,36 +84,6 @@ public:
         gridLayout_7->setObjectName(QString::fromUtf8("gridLayout_7"));
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        label = new QLabel(tab_3);
-        label->setObjectName(QString::fromUtf8("label"));
-
-        horizontalLayout->addWidget(label);
-
-        label_5 = new QLabel(tab_3);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
-
-        horizontalLayout->addWidget(label_5);
-
-        label_3 = new QLabel(tab_3);
-        label_3->setObjectName(QString::fromUtf8("label_3"));
-
-        horizontalLayout->addWidget(label_3);
-
-        label_6 = new QLabel(tab_3);
-        label_6->setObjectName(QString::fromUtf8("label_6"));
-
-        horizontalLayout->addWidget(label_6);
-
-        label_2 = new QLabel(tab_3);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-
-        horizontalLayout->addWidget(label_2);
-
-        label_4 = new QLabel(tab_3);
-        label_4->setObjectName(QString::fromUtf8("label_4"));
-
-        horizontalLayout->addWidget(label_4);
-
 
         gridLayout_7->addLayout(horizontalLayout, 0, 0, 1, 1);
 
@@ -160,12 +123,6 @@ public:
         SignInInformation->setWindowTitle(QApplication::translate("SignInInformation", "\346\216\245\347\217\255\344\277\241\346\201\257\351\241\265\351\235\242", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("SignInInformation", "\344\272\213\346\225\205\344\277\241\346\201\257", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("SignInInformation", "\346\243\200\344\277\256\350\256\241\345\210\222", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("SignInInformation", "         \346\210\220\345\212\237\346\254\241\346\225\260\357\274\232", 0, QApplication::UnicodeUTF8));
-        label_5->setText(QApplication::translate("SignInInformation", "                    8", 0, QApplication::UnicodeUTF8));
-        label_3->setText(QApplication::translate("SignInInformation", "\346\254\241", 0, QApplication::UnicodeUTF8));
-        label_6->setText(QApplication::translate("SignInInformation", "         \345\244\261\350\264\245\346\254\241\346\225\260\357\274\232", 0, QApplication::UnicodeUTF8));
-        label_2->setText(QApplication::translate("SignInInformation", "                    0", 0, QApplication::UnicodeUTF8));
-        label_4->setText(QApplication::translate("SignInInformation", "\346\254\241", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("SignInInformation", "\351\201\245\346\216\247\350\256\260\345\275\225", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_4), QApplication::translate("SignInInformation", "\347\272\277\350\267\257\350\264\237\350\275\275", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

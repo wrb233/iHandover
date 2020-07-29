@@ -92,7 +92,8 @@ HEADERS += common.h\
 		   configuration.h\
 		   confirm.h\
 		   workhourdelegation.h\
-		   frmdataout.h
+		   frmdataout.h\
+		   datedelegate.h
            
 		   
 SOURCES += mainwindow.cpp\
@@ -110,7 +111,8 @@ SOURCES += mainwindow.cpp\
 		   configuration.cpp\
 		   confirm.cpp\
 		   workhourdelegation.cpp\
-		   frmdataout.cpp
+		   frmdataout.cpp\
+		   datedelegate.cpp
 
 FORMS    += mainwindow.ui\
 		    signout.ui\

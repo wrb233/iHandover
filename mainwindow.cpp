@@ -226,7 +226,7 @@ void MainWindow::showSignOutDialog()
 
 		//1判断事故信息新表里面数据条数,必须判断新表里用户所选的班次内有没有数据
 		RECORDSETHANDLE isfaaccidentNullSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqlfaaccidentisNull = "select COUNT(*) from H_FA_ACCIDENTINFO where time between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
+		QString sqlfaaccidentisNull = "select COUNT(*) from H_FA_ACCIDENTINFO where START_TIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 		int rowsOfTersqlfaaccidentisNull = CPS_ORM_RsLoadData(isfaaccidentNullSetHandle,sqlfaaccidentisNull.toUtf8().data(),dbPoolHandle);
 		int itemsoffaaccident = CPS_ORM_RsGetNumberValue(isfaaccidentNullSetHandle,0,0);
 		CPS_ORM_RsFreeRecordSet(isfaaccidentNullSetHandle);
@@ -240,21 +240,21 @@ void MainWindow::showSignOutDialog()
 
 		//2判断检修计划新表里面数据条数,必须判断新表里用户所选的班次内有没有数据
 		RECORDSETHANDLE ismaintenanceplanNullSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqlmaintenanceplanisNull = "select COUNT(*) from H_MAINTENANCE_PLAN where time between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
+		QString sqlmaintenanceplanisNull = "select COUNT(*) from H_MAINTENANCE_PLAN where TIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 		int rowsOfTersqlmaintenanceplanisNull = CPS_ORM_RsLoadData(ismaintenanceplanNullSetHandle,sqlmaintenanceplanisNull.toUtf8().data(),dbPoolHandle);
 		int itemsofmaintenanceplan = CPS_ORM_RsGetNumberValue(ismaintenanceplanNullSetHandle,0,0);
 		CPS_ORM_RsFreeRecordSet(ismaintenanceplanNullSetHandle);
 
 		//2先从检修计划老表里面展示已有数据
 		if (itemsofmaintenanceplan == 0)
-			signoutinformation.firstshowMaintenancePlan(strstarttime, strendtime ,startshift);
+			signoutinformation.firstshowMaintenancePlan(strstarttime, strendtime ,startdate, startshift);
 		//2检修计划新表里面已经有数据了，先把新表数据展示，然后再查老表
 		else
-			signoutinformation.secondshowMaintenancePlan(strstarttime, strendtime ,startshift);
+			signoutinformation.secondshowMaintenancePlan(strstarttime, strendtime ,startdate,startshift);
 
 		//3判断遥控记录新表里面数据条数,必须判断新表里用户所选的班次内有没有数据
 		RECORDSETHANDLE isdpcpointNullSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqldpcpointisNull = "select COUNT(*) from H_DPC_OPTRECORD where time between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
+		QString sqldpcpointisNull = "select COUNT(*) from H_DPC_OPTRECORD where OPT_TIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 		int rowsOfTersqldpcpointisNull = CPS_ORM_RsLoadData(isdpcpointNullSetHandle,sqldpcpointisNull.toUtf8().data(),dbPoolHandle);
 		int itemsofdpcpoint = CPS_ORM_RsGetNumberValue(isdpcpointNullSetHandle,0,0);
 		CPS_ORM_RsFreeRecordSet(isdpcpointNullSetHandle);
@@ -270,7 +270,7 @@ void MainWindow::showSignOutDialog()
 
 		//4判断线路重载新表里面数据条数,必须判断新表里用户所选的班次内有没有数据
 		RECORDSETHANDLE isfeederoverloadNullSetHandle = CPS_ORM_RsNewRecordSet();
-		QString sqlfeederoverloadisNull = "select COUNT(*) from H_FEEDER_OVERLOAD where time between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
+		QString sqlfeederoverloadisNull = "select COUNT(*) from H_FEEDER_OVERLOAD where OCCUR_TIME between to_timestamp('"+strstarttime+"','yyyy-MM-dd hh24:mi:ss') and to_timestamp('"+strendtime+"','yyyy-MM-dd hh24:mi:ss')";
 		int rowsOfTersqlfeederoverloadisNull = CPS_ORM_RsLoadData(isfeederoverloadNullSetHandle,sqlfeederoverloadisNull.toUtf8().data(),dbPoolHandle);
 		int itemsoffeederoverload = CPS_ORM_RsGetNumberValue(isfeederoverloadNullSetHandle,0,0);
 		CPS_ORM_RsFreeRecordSet(isfeederoverloadNullSetHandle);
@@ -304,10 +304,10 @@ void MainWindow::showSignOutDialog()
 				signoutinformation.secondwriteFAaccidentTable(strstarttime, strendtime, startshift, informationcurDateTime);
 			//检修计划写入
 			if (itemsofmaintenanceplan == 0)
-				signoutinformation.firstwriteMaintenancePlanTable(strstarttime, strendtime ,startshift, informationcurDateTime);
+				signoutinformation.firstwriteMaintenancePlanTable(strstarttime, strendtime ,startdate, startshift, informationcurDateTime);
 			
 			else
-				signoutinformation.secondwriteMaintenancePlanTable(strstarttime, strendtime ,startshift, informationcurDateTime);
+				signoutinformation.secondwriteMaintenancePlanTable(strstarttime, strendtime ,startdate, startshift, informationcurDateTime);
 			
 			//遥控记录写入
 			if (itemsofdpcpoint == 0)

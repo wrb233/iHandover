@@ -8,6 +8,9 @@
 
 #include <QCoreApplication>
 
+#include "common.h"
+#include "ToolUtil.h"
+
 #ifndef SIGNININFORMATION_H
 #define SIGNININFORMATION_H
  
@@ -59,7 +62,19 @@ private slots:
 
 	    
 private:
+
+
+	Ui::SignInInformation *ui;
+
 	QDateTime informationcurDateTime;
+
+
+	QStandardItemModel* FAInfo_model;
+	QStandardItemModel* MaintenancePlan_model;
+	QStandardItemModel* DPCPoint_model;
+	QStandardItemModel* FeederOverload_model;
+
+
 
 	QDateTime signpagetime;
 
@@ -74,8 +89,7 @@ private:
 
 
 
-	Ui::SignInInformation *ui;
-
+	
 	
 
 };
